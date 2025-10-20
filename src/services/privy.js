@@ -75,6 +75,44 @@ export async function createBountyWallet(bountyId) {
 }
 
 /**
+ * Transfer funds from escrow wallet to contributor wallet
+ * 
+ * @param {string} escrowWalletAddress - Escrow wallet address (Privy-managed)
+ * @param {string} recipientAddress - Recipient's Solana wallet address
+ * @param {number} amount - Amount in USDC
+ * @returns {Promise<string>} - Transaction signature
+ */
+export async function transferBountyFunds(escrowWalletAddress, recipientAddress, amount) {
+  console.log(`💸 Transferring ${amount} USDC from ${escrowWalletAddress} to ${recipientAddress}`);
+  
+  const client = getPrivyClient();
+  
+  if (!client) {
+    throw new Error('Privy not configured - cannot transfer funds');
+  }
+  
+  try {
+    // For now, let's simulate the transfer since Privy's transaction API is complex
+    // In production, you'd implement the actual Privy transaction here
+    
+    console.log(`⚠️  Simulating transfer (Privy transaction API needs more work)`);
+    console.log(`   From: ${escrowWalletAddress}`);
+    console.log(`   To: ${recipientAddress}`);
+    console.log(`   Amount: ${amount} USDC`);
+    
+    // Generate a fake transaction signature for testing
+    const fakeSignature = `simulated_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    console.log(`✅ Transfer simulated: ${fakeSignature}`);
+    return fakeSignature;
+    
+  } catch (error) {
+    console.error('❌ Transfer failed:', error.message);
+    throw new Error(`Failed to transfer funds: ${error.message}`);
+  }
+}
+
+/**
  * Authenticate a user with GitHub via Privy
  * This would be used in the dashboard/claim flow
  * 
@@ -104,6 +142,7 @@ export async function authenticateWithGitHub(githubUsername) {
 
 export default {
   createBountyWallet,
+  transferBountyFunds,
   authenticateWithGitHub,
 };
 

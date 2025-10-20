@@ -103,6 +103,80 @@ webhooks.on('issues.unlabeled', async ({ payload }) => {
 });
 
 /**
+ * Handle issue closed events
+ * Post a confirmation comment when an issue with a bounty is closed
+ */
+webhooks.on('issues.closed', async ({ payload }) => {
+  const { issue, repository, installation } = payload;
+  
+  console.log(`🔒 Issue #${issue.number} closed`);
+  
+  // Check if this issue has a bounty
+  const bounty = getBountyByIssue(
+    repository.owner.login,
+    repository.name,
+    issue.number
+  );
+  
+  if (!bounty) {
+    return; // No bounty on this issue
+  }
+  
+  console.log(`💰 Issue #${issue.number} has a bounty (status: ${bounty.status})`);
+  
+  // Post completion comment based on bounty status
+  let comment = '';
+  
+  if (bounty.status === 'claimed') {
+    comment = `## ✅ Bounty Successfully Completed!
+
+This issue has been resolved and the bounty has been claimed by @${bounty.contributor_github_username}.
+
+**Final Status:**
+- 💰 Amount: ${bounty.bounty_amount} ${bounty.currency}
+- 👤 Claimed by: @${bounty.contributor_github_username}
+- 📝 Pull Request: #${bounty.pull_request_number}
+${bounty.transaction_signature ? `- 🔗 Transaction: [View on Explorer](https://explorer.solana.com/tx/${bounty.transaction_signature}?cluster=devnet)` : ''}
+
+Thank you for contributing to open source! 🎉
+
+---
+*Powered by [GitWork](https://gitwork.dev) 🚀*`;
+  } else if (bounty.status === 'ready_to_claim') {
+    comment = `## 🎯 Issue Resolved - Bounty Ready to Claim!
+
+This issue has been closed. The bounty is ready to be claimed by @${bounty.contributor_github_username}.
+
+**Next Step:** @${bounty.contributor_github_username} can claim their **${bounty.bounty_amount} ${bounty.currency}** reward!
+
+---
+*Powered by [GitWork](https://gitwork.dev) 🚀*`;
+  } else {
+    // Issue closed but bounty not claimed yet
+    comment = `## 📌 Issue Closed
+
+This issue has been closed. The bounty status is: **${bounty.status}**.
+
+---
+*Powered by [GitWork](https://gitwork.dev) 🚀*`;
+  }
+  
+  try {
+    await postIssueComment(
+      installation.id,
+      repository.owner.login,
+      repository.name,
+      issue.number,
+      comment
+    );
+    
+    console.log(`💬 Posted completion comment on issue #${issue.number}`);
+  } catch (error) {
+    console.error(`❌ Error posting completion comment:`, error.message);
+  }
+});
+
+/**
  * Handle pull request closed events
  * This is triggered when a PR is merged that resolves an issue
  */
@@ -150,9 +224,9 @@ webhooks.on('pull_request.closed', async ({ payload }) => {
       pull_request_number: pull_request.number
     });
     
-    // Post claim notification comment
+    // Post claim notification comment on the issue
     const claimUrl = `${process.env.CLAIM_BASE_URL || 'http://localhost:3000'}/claim/${bounty.id}`;
-    const comment = generateClaimNotificationComment(
+    const issueComment = generateClaimNotificationComment(
       pull_request.user.login,
       bounty.bounty_amount,
       bounty.currency,
@@ -165,12 +239,45 @@ webhooks.on('pull_request.closed', async ({ payload }) => {
         repository.owner.login,
         repository.name,
         issueNumber,
-        comment
+        issueComment
       );
       
-      console.log(`✅ Claim notification posted for issue #${issueNumber}`);
+      console.log(`✅ Claim notification posted on issue #${issueNumber}`);
     } catch (error) {
-      console.error(`❌ Error posting claim notification:`, error);
+      console.error(`❌ Error posting claim notification on issue:`, error);
+    }
+    
+    // Also post a comment on the PR itself
+    const prComment = `## 🎉 Bounty Unlocked!
+
+Great work @${pull_request.user.login}! This PR resolves issue #${issueNumber} which has a **${bounty.bounty_amount} ${bounty.currency}** bounty attached.
+
+**Next Steps:**
+1. Wait for the issue to be closed
+2. Visit your claim link: [Claim ${bounty.bounty_amount} ${bounty.currency}](${claimUrl})
+3. Sign in with GitHub and provide your Solana wallet address
+4. Receive your reward! 💰
+
+Thank you for contributing to open source! 🚀
+
+---
+*Powered by [GitWork](https://gitwork.dev)*`;
+    
+    try {
+      // Post comment on PR using Octokit
+      const { getOctokitForInstallation } = await import('../services/github.js');
+      const octokit = await getOctokitForInstallation(installation.id);
+      
+      await octokit.issues.createComment({
+        owner: repository.owner.login,
+        repo: repository.name,
+        issue_number: pull_request.number,
+        body: prComment
+      });
+      
+      console.log(`✅ Bounty notification posted on PR #${pull_request.number}`);
+    } catch (error) {
+      console.error(`❌ Error posting comment on PR:`, error);
     }
   }
 });
