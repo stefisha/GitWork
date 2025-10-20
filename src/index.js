@@ -1,5 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import session from 'express-session';
+import passport from 'passport';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
@@ -11,6 +13,9 @@ console.log('🔑 Secret value:', process.env.GITHUB_WEBHOOK_SECRET);
 
 // NOW import modules that depend on environment variables
 import webhookRoutes from './routes/webhooks.js';
+import authRoutes from './routes/auth.js';
+import claimRoutes from './routes/claim.js';
+import apiClaimRoutes from './routes/api-claim.js';
 import { runMigrations } from './db/migrate.js';
 import depositMonitor from './services/deposit-monitor.js';
 
@@ -19,6 +24,21 @@ const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'gitwork-secret-key-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Middleware
 app.use(express.json());
@@ -33,6 +53,9 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/webhooks', webhookRoutes);
+app.use('/auth', authRoutes);
+app.use('/claim', claimRoutes);
+app.use('/api/claim', apiClaimRoutes);
 
 // Simulation endpoint for testing
 app.post('/api/simulate-deposit', async (req, res) => {
