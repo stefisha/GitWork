@@ -37,8 +37,16 @@ passport.deserializeUser((user, done) => {
  */
 router.get('/github', (req, res, next) => {
   const returnTo = req.query.returnTo || '/';
-  req.session.returnTo = returnTo;
-  passport.authenticate('github', { scope: ['user:email'] })(req, res, next);
+  console.log('🔐 GitHub OAuth initiated');
+  console.log('   Return URL:', returnTo);
+  
+  // Store returnTo in the OAuth state parameter instead of session
+  const state = Buffer.from(JSON.stringify({ returnTo })).toString('base64');
+  
+  passport.authenticate('github', { 
+    scope: ['user:email'],
+    state: state
+  })(req, res, next);
 });
 
 /**
@@ -47,6 +55,23 @@ router.get('/github', (req, res, next) => {
 router.get('/github/callback',
   passport.authenticate('github', { failureRedirect: '/' }),
   (req, res) => {
+    console.log('🔐 GitHub OAuth callback received');
+    console.log('   User:', req.user?.username);
+    
+    // Extract returnTo from OAuth state parameter
+    let returnTo = '/';
+    try {
+      const state = req.query.state;
+      if (state) {
+        const decodedState = JSON.parse(Buffer.from(state, 'base64').toString());
+        returnTo = decodedState.returnTo || '/';
+      }
+    } catch (error) {
+      console.log('   Error parsing state:', error.message);
+    }
+    
+    console.log('   Return URL from state:', returnTo);
+    
     // Store user in session
     req.session.githubUser = {
       login: req.user.username,
@@ -54,9 +79,7 @@ router.get('/github/callback',
       avatar: req.user.photos?.[0]?.value
     };
     
-    const returnTo = req.session.returnTo || '/';
-    delete req.session.returnTo;
-    
+    console.log('   Redirecting to:', returnTo);
     res.redirect(returnTo);
   }
 );

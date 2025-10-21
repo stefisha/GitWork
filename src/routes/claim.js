@@ -30,6 +30,120 @@ router.get('/:bountyId', (req, res) => {
     `);
   }
   
+  if (bounty.status === 'claimed') {
+    return res.send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Bounty Completed - GitWork</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+              min-height: 100vh;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 20px;
+            }
+            .container {
+              max-width: 600px;
+              background: white;
+              border-radius: 16px;
+              box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+              padding: 60px 40px;
+              text-align: center;
+            }
+            .success-icon { font-size: 80px; margin-bottom: 20px; }
+            h1 { font-size: 32px; color: #10b981; margin-bottom: 16px; }
+            p { color: #6b7280; font-size: 18px; margin-bottom: 30px; }
+            .amount { font-size: 48px; font-weight: 700; color: #111827; margin-bottom: 30px; }
+            .details {
+              background: #f3f4f6;
+              padding: 20px;
+              border-radius: 12px;
+              margin-bottom: 30px;
+              text-align: left;
+            }
+            .detail-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 8px 0;
+              border-bottom: 1px solid #e5e7eb;
+            }
+            .detail-row:last-child { border-bottom: none; }
+            .detail-label { color: #6b7280; font-weight: 500; }
+            .detail-value { font-weight: 600; color: #111827; }
+            .tx-link {
+              background: #f3f4f6;
+              padding: 16px;
+              border-radius: 8px;
+              margin-bottom: 30px;
+              word-break: break-all;
+            }
+            .tx-link a {
+              color: #667eea;
+              text-decoration: none;
+              font-family: monospace;
+              font-size: 14px;
+            }
+            .btn {
+              display: inline-block;
+              padding: 16px 32px;
+              background: #10b981;
+              color: white;
+              text-decoration: none;
+              border-radius: 8px;
+              font-weight: 600;
+              transition: transform 0.2s;
+            }
+            .btn:hover { transform: translateY(-2px); }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="success-icon">🎉</div>
+            <h1>Bounty Completed!</h1>
+            <p>This bounty has been successfully claimed and paid out.</p>
+            
+            <div class="amount">${bounty.bounty_amount} ${bounty.currency}</div>
+            
+            <div class="details">
+              <div class="detail-row">
+                <span class="detail-label">Paid to</span>
+                <span class="detail-value">@${bounty.contributor_github_username}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Issue</span>
+                <span class="detail-value">#${bounty.github_issue_number}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Repository</span>
+                <span class="detail-value">${bounty.github_repo_owner}/${bounty.github_repo_name}</span>
+              </div>
+              ${bounty.transaction_signature ? `
+                <div class="detail-row">
+                  <span class="detail-label">Transaction</span>
+                  <span class="detail-value">
+                    <a href="https://explorer.solana.com/tx/${bounty.transaction_signature}?cluster=devnet" target="_blank">
+                      View on Explorer
+                    </a>
+                  </span>
+                </div>
+              ` : ''}
+            </div>
+            
+            <a href="https://github.com/${bounty.github_repo_owner}/${bounty.github_repo_name}/issues/${bounty.github_issue_number}" class="btn">
+              View Issue on GitHub
+            </a>
+          </div>
+        </body>
+      </html>
+    `);
+  }
+  
   if (bounty.status !== 'ready_to_claim') {
     return res.send(`
       <!DOCTYPE html>
