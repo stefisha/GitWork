@@ -351,8 +351,8 @@ Your contribution to open source just got rewarded. Thank you! 🚀
  */
 function extractIssueReferences(body, title) {
   const text = `${title}\n${body}`;
-  // Updated pattern to handle "Fixing #123", "Fix Issue #123", "Fixes #123", "Closes #456", etc.
-  const pattern = /(?:fix|fixes|fixed|fixing|close|closes|closed|resolve|resolves|resolved)(?:\s+issue)?\s+#(\d+)/gi;
+  // Simple pattern: just look for #123 anywhere in the PR title or description
+  const pattern = /#(\d+)/g;
   const matches = [];
   let match;
   

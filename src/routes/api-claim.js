@@ -64,7 +64,8 @@ router.post('/:bountyId', express.json(), async (req, res) => {
       transactionSignature = await transferBountyFunds(
         bounty.escrow_wallet_address,
         walletAddress,
-        bounty.bounty_amount
+        bounty.bounty_amount,
+        bounty.currency
       );
       
       console.log(`✅ Transfer successful: ${transactionSignature}`);
