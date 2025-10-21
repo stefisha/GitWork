@@ -117,11 +117,12 @@ export async function createBountyWallet(bountyId) {
  * 
  * @param {string} escrowWalletAddress - Escrow wallet address (Privy-managed)
  * @param {string} recipientAddress - Recipient's Solana wallet address
- * @param {number} amount - Amount in USDC
+ * @param {number} amount - Amount to transfer
+ * @param {string} currency - Currency type (USDC or SOL)
  * @returns {Promise<string>} - Transaction signature
  */
-export async function transferBountyFunds(escrowWalletAddress, recipientAddress, amount) {
-  console.log(`💸 Transferring ${amount} USDC from ${escrowWalletAddress} to ${recipientAddress}`);
+export async function transferBountyFunds(escrowWalletAddress, recipientAddress, amount, currency = 'USDC') {
+  console.log(`💸 Transferring ${amount} ${currency} from ${escrowWalletAddress} to ${recipientAddress}`);
 
   const client = getPrivyClient();
   const feePayer = getFeePayerWallet();
@@ -152,16 +153,11 @@ export async function transferBountyFunds(escrowWalletAddress, recipientAddress,
       PublicKey,
       VersionedTransaction,
       TransactionMessage,
-      Connection
+      Connection,
+      SystemProgram
     } = await import('@solana/web3.js');
-    const {
-      getAssociatedTokenAddress,
-      createTransferInstruction,
-      TOKEN_PROGRAM_ID
-    } = await import('@solana/spl-token');
 
     const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com');
-    const USDC_MINT = process.env.USDC_MINT_ADDRESS || '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU';
 
     // Check fee payer SOL balance
     const feePayerBalance = await connection.getBalance(feePayer.publicKey);
@@ -179,30 +175,65 @@ export async function transferBountyFunds(escrowWalletAddress, recipientAddress,
       throw new Error(`Insufficient SOL for transaction fees. Fee payer has ${feePayerBalance / 1e9} SOL. Please fund: ${feePayer.publicKey.toBase58()}`);
     }
 
-    // Get token accounts
-    const senderTokenAccount = await getAssociatedTokenAddress(
-      new PublicKey(USDC_MINT),
-      new PublicKey(escrowWalletAddress)
-    );
-
-    const recipientTokenAccount = await getAssociatedTokenAddress(
-      new PublicKey(USDC_MINT),
-      new PublicKey(recipientAddress)
-    );
-
     // Get recent blockhash
     const recentBlockhash = await connection.getLatestBlockhash();
     console.log(`📡 Got recent blockhash: ${recentBlockhash.blockhash}`);
 
-    // Create USDC transfer instruction
-    const transferInstruction = createTransferInstruction(
-      senderTokenAccount,
-      recipientTokenAccount,
-      new PublicKey(escrowWalletAddress),
-      amount * 1_000_000, // USDC has 6 decimals
-      [],
-      TOKEN_PROGRAM_ID
-    );
+    let transferInstruction;
+    let logDetails = '';
+
+    if (currency === 'SOL') {
+      // Native SOL transfer
+      transferInstruction = SystemProgram.transfer({
+        fromPubkey: new PublicKey(escrowWalletAddress),
+        toPubkey: new PublicKey(recipientAddress),
+        lamports: Math.floor(amount * 1_000_000_000), // SOL has 9 decimals
+      });
+
+      console.log(`📝 Created sponsored SOL transfer transaction`);
+      console.log(`   From: ${escrowWalletAddress}`);
+      console.log(`   To: ${recipientAddress}`);
+      console.log(`   Amount: ${amount} SOL (${Math.floor(amount * 1_000_000_000)} lamports)`);
+      console.log(`   Fee payer: ${feePayer.publicKey.toBase58()}`);
+      
+      logDetails = `SOL transfer: ${amount} SOL`;
+    } else {
+      // USDC (SPL token) transfer
+      const {
+        getAssociatedTokenAddress,
+        createTransferInstruction,
+        TOKEN_PROGRAM_ID
+      } = await import('@solana/spl-token');
+
+      const USDC_MINT = process.env.USDC_MINT_ADDRESS || '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU';
+
+      const senderTokenAccount = await getAssociatedTokenAddress(
+        new PublicKey(USDC_MINT),
+        new PublicKey(escrowWalletAddress)
+      );
+
+      const recipientTokenAccount = await getAssociatedTokenAddress(
+        new PublicKey(USDC_MINT),
+        new PublicKey(recipientAddress)
+      );
+
+      transferInstruction = createTransferInstruction(
+        senderTokenAccount,
+        recipientTokenAccount,
+        new PublicKey(escrowWalletAddress),
+        amount * 1_000_000, // USDC has 6 decimals
+        [],
+        TOKEN_PROGRAM_ID
+      );
+
+      console.log(`📝 Created sponsored USDC transfer transaction`);
+      console.log(`   From token account: ${senderTokenAccount.toString()}`);
+      console.log(`   To token account: ${recipientTokenAccount.toString()}`);
+      console.log(`   Amount: ${amount} USDC (${amount * 1_000_000} micro-USDC)`);
+      console.log(`   Fee payer: ${feePayer.publicKey.toBase58()}`);
+      
+      logDetails = `USDC transfer: ${amount} USDC`;
+    }
 
     // Create transaction message with fee payer
     const message = new TransactionMessage({
@@ -213,12 +244,6 @@ export async function transferBountyFunds(escrowWalletAddress, recipientAddress,
 
     // Create versioned transaction
     const transaction = new VersionedTransaction(message.compileToV0Message());
-
-    console.log(`📝 Created sponsored USDC transfer transaction`);
-    console.log(`   From token account: ${senderTokenAccount.toString()}`);
-    console.log(`   To token account: ${recipientTokenAccount.toString()}`);
-    console.log(`   Amount: ${amount} USDC (${amount * 1_000_000} micro-USDC)`);
-    console.log(`   Fee payer: ${feePayer.publicKey.toBase58()}`);
 
     // Sign with escrow wallet using Privy
     const serializedMessage = Buffer.from(transaction.message.serialize()).toString('base64');
@@ -235,7 +260,7 @@ export async function transferBountyFunds(escrowWalletAddress, recipientAddress,
 
     // Send transaction
     const signature = await connection.sendTransaction(transaction);
-    console.log(`✅ Sponsored USDC transfer successful: ${signature}`);
+    console.log(`✅ Sponsored ${currency} transfer successful: ${signature}`);
     
     return signature;
 
