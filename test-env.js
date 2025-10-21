@@ -17,3 +17,4 @@ try {
 } catch (error) {
   console.error('❌ Private key file error:', error.message);
 }
+

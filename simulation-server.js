@@ -67,3 +67,4 @@ app.listen(PORT, () => {
   console.log(`🎯 Simulation server running on port ${PORT}`);
   console.log('POST to http://localhost:3001/simulate-deposit to trigger simulation');
 });
+

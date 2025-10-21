@@ -58,3 +58,4 @@ if (db.installations.length > 0) {
 if (db.bounties.length > 0) {
   console.log('Bounty details:', db.bounties[0]);
 }
+
