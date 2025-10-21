@@ -66,3 +66,4 @@ if (db.bounties.length > 0) {
 } else {
   console.log('\n⚠️  No bounties were created. Check server logs for errors.');
 }
+
