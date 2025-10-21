@@ -281,4 +281,3 @@ For issues or questions:
 - Database queries: Use `sqlite3 data/gitwork.db` to inspect data
 - Test webhooks: Use the test script to simulate events
 
-

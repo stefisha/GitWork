@@ -136,7 +136,7 @@ webhooks.on('issues.closed', async ({ payload }) => {
 - **Amount:** ${bounty.bounty_amount} ${bounty.currency}
 - **Paid to:** @${bounty.contributor_github_username}
 - **Pull Request:** #${bounty.pull_request_number}
-${bounty.transaction_signature ? `- **Transaction:** [View on Solana Explorer](https://explorer.solana.com/tx/${bounty.transaction_signature}?cluster=devnet) ✅` : ''}
+${bounty.transaction_signature ? `- **Transaction:** [View on Solana Explorer](https://explorer.solana.com/tx/${bounty.transaction_signature}) ✅` : ''}
 
 ### 🎉 Thank You!
 Big thanks to @${bounty.contributor_github_username} for contributing to open source and making this project better!
