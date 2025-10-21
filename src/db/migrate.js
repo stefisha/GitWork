@@ -21,10 +21,12 @@ function runMigrations() {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       deposit_confirmed_at DATETIME,
       claimed_at DATETIME,
+      cancelled_at DATETIME,
       claim_wallet_address TEXT,
       contributor_github_username TEXT,
       pull_request_number INTEGER,
       transaction_signature TEXT,
+      refund_transaction TEXT,
       UNIQUE(github_repo_owner, github_repo_name, github_issue_number)
     );
 

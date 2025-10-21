@@ -274,6 +274,48 @@ export async function transferBountyFunds(escrowWalletAddress, recipientAddress,
 }
 
 /**
+ * Refund escrowed funds to the fee payer wallet
+ * This is a reasonable default since the fee payer is the system wallet
+ * In production, you might want to track the original depositor
+ * 
+ * @param {Object} bounty - Bounty object
+ * @returns {Promise<Object>} - Refund transaction details
+ */
+export async function refundEscrowedFunds(bounty) {
+  console.log(`💸 Refunding ${bounty.bounty_amount} ${bounty.currency} from bounty ${bounty.id}`);
+  
+  // Use the fee payer wallet as the refund address
+  const feePayer = getFeePayerWallet();
+  if (!feePayer) {
+    throw new Error('Fee payer wallet not available for refund');
+  }
+  
+  const refundAddress = feePayer.publicKey.toBase58();
+  console.log(`🔄 Refunding to fee payer wallet: ${refundAddress}`);
+  
+  try {
+    const transactionSignature = await transferBountyFunds(
+      bounty.escrow_wallet_address,
+      refundAddress,
+      bounty.bounty_amount,
+      bounty.currency
+    );
+    
+    console.log(`✅ Refund successful: ${transactionSignature}`);
+    
+    return {
+      transactionSignature,
+      refundAddress,
+      amount: bounty.bounty_amount,
+      currency: bounty.currency
+    };
+  } catch (error) {
+    console.error('❌ Refund failed:', error.message);
+    throw new Error(`Failed to refund funds: ${error.message}`);
+  }
+}
+
+/**
  * Authenticate a user with GitHub via Privy
  * This would be used in the dashboard/claim flow
  * 
