@@ -75,9 +75,9 @@ class DepositMonitor {
    * @param {Object} bounty - Bounty object
    */
   async checkBounty(bounty) {
-    const hasDeposit = await checkBountyDeposit(bounty.id);
+    const depositResult = await checkBountyDeposit(bounty.id);
 
-    if (hasDeposit) {
+    if (depositResult.valid) {
       console.log(`✅ Deposit confirmed for bounty ${bounty.id} (Issue #${bounty.github_issue_number})`);
 
       // Update status
@@ -108,6 +108,71 @@ class DepositMonitor {
       } catch (error) {
         console.error(`❌ Error posting comment:`, error.message);
       }
+    } else {
+      // Log validation failure
+      console.log(`❌ Deposit validation failed for bounty ${bounty.id}: ${depositResult.reason}`);
+      
+      // If there's a significant balance but wrong currency, post a warning comment
+      if (depositResult.actualBalance && depositResult.actualBalance > 0) {
+        await this.postDepositErrorComment(bounty, depositResult);
+      }
+    }
+  }
+
+  /**
+   * Post error comment for invalid deposits
+   * 
+   * @param {Object} bounty - Bounty object
+   * @param {Object} depositResult - Deposit validation result
+   */
+  async postDepositErrorComment(bounty, depositResult) {
+    if (!bounty.github_installation_id) {
+      return;
+    }
+
+    // Get current balances for display
+    const { checkUSDCBalance, checkSOLBalance } = await import('./solana.js');
+    const [usdcBalance, solBalance] = await Promise.all([
+      checkUSDCBalance(bounty.escrow_wallet_address),
+      checkSOLBalance(bounty.escrow_wallet_address)
+    ]);
+
+    const errorComment = `## ❌ Invalid Deposit Detected
+
+I detected a deposit in the escrow wallet, but it doesn't match the bounty requirements.
+
+**Bounty Requirements:**
+- **Currency:** ${bounty.currency}
+- **Amount:** ${bounty.bounty_amount} ${bounty.currency}
+
+**Current Wallet Balance:**
+- **USDC:** ${usdcBalance}
+- **SOL:** ${solBalance}
+
+**Issue:** ${depositResult.reason}
+
+**To fix this:**
+1. Send the **correct currency** (${bounty.currency}) to the escrow wallet
+2. Send the **exact amount** (${bounty.bounty_amount} ${bounty.currency})
+3. I'll automatically detect the correct deposit
+
+**Escrow Wallet:** \`${bounty.escrow_wallet_address}\`
+
+---
+*Powered by GitWork - Making open source rewarding* 💎`;
+
+    try {
+      await postIssueComment(
+        bounty.github_installation_id,
+        bounty.github_repo_owner,
+        bounty.github_repo_name,
+        bounty.github_issue_number,
+        errorComment
+      );
+
+      console.log(`💬 Posted deposit error comment on issue #${bounty.github_issue_number}`);
+    } catch (error) {
+      console.error(`❌ Error posting deposit error comment:`, error.message);
     }
   }
 

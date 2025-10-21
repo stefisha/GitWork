@@ -2,7 +2,7 @@ import '../config.js'; // Load environment variables FIRST
 import express from 'express';
 import { Webhooks } from '@octokit/webhooks';
 import db from '../db/database.js';
-import { processBountyLabel, getBountyByIssue, updateBountyStatus, logActivity } from '../services/bounty.js';
+import { processBountyLabel, getBountyByIssue, updateBountyStatus, logActivity, cancelBountyAndRefund } from '../services/bounty.js';
 import { postIssueComment, generateClaimNotificationComment } from '../services/github.js';
 
 const router = express.Router();
@@ -80,13 +80,28 @@ webhooks.on('issues.labeled', async ({ payload }) => {
 
 /**
  * Handle issue unlabeled events
- * This could be used to cancel a bounty if the label is removed
+ * This cancels a bounty if the label is removed and refunds any escrowed funds
  */
 webhooks.on('issues.unlabeled', async ({ payload }) => {
-  const { issue, label, repository } = payload;
+  const { issue, label, repository, installation } = payload;
   
-  if (label.name.startsWith('Octavian:')) {
-    console.log(`🗑️  Bounty label removed from issue #${issue.number}`);
+  if (label.name.toLowerCase().startsWith('octavian:')) {
+    console.log(`🗑️  Bounty label removed from issue #${issue.number}: ${label.name}`);
+    
+    try {
+      await cancelBountyAndRefund(
+        issue.repository.owner.login,
+        issue.repository.name,
+        issue.number,
+        installation.id
+      );
+      
+      console.log(`✅ Bounty cancelled and refunded for issue #${issue.number}`);
+    } catch (error) {
+      console.error(`❌ Error cancelling bounty:`, error);
+    }
+  }
+});
     
     const bounty = getBountyByIssue(
       repository.owner.login,
