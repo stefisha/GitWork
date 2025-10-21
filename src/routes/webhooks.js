@@ -128,34 +128,33 @@ webhooks.on('issues.closed', async ({ payload }) => {
   let comment = '';
   
   if (bounty.status === 'claimed') {
-    comment = `## ✅ Bounty Successfully Completed!
+    comment = `## 🎊 Bounty Complete - Payment Sent!
 
-This issue has been resolved and the bounty has been claimed by @${bounty.contributor_github_username}.
+**Congratulations!** This issue has been successfully resolved and the bounty has been paid out.
 
-**Final Status:**
-- 💰 Amount: ${bounty.bounty_amount} ${bounty.currency}
-- 👤 Claimed by: @${bounty.contributor_github_username}
-- 📝 Pull Request: #${bounty.pull_request_number}
-${bounty.transaction_signature ? `- 🔗 Transaction: [View on Explorer](https://explorer.solana.com/tx/${bounty.transaction_signature}?cluster=devnet)` : ''}
+### 💰 Payment Details:
+- **Amount:** ${bounty.bounty_amount} ${bounty.currency}
+- **Paid to:** @${bounty.contributor_github_username}
+- **Pull Request:** #${bounty.pull_request_number}
+${bounty.transaction_signature ? `- **Transaction:** [View on Solana Explorer](https://explorer.solana.com/tx/${bounty.transaction_signature}?cluster=devnet) ✅` : ''}
 
-Thank you for contributing to open source! 🎉
+### 🎉 Thank You!
+Big thanks to @${bounty.contributor_github_username} for contributing to open source and making this project better!
 
 ---
-*Powered by [GitWork](https://gitwork.dev) 🚀*`;
+*Automated by [GitWork](https://gitwork.dev) - Turn GitHub issues into instant bounties 🚀*`;
   } else if (bounty.status === 'ready_to_claim') {
-    comment = `## 🎯 Issue Resolved - Bounty Ready to Claim!
-
-This issue has been closed. The bounty is ready to be claimed by @${bounty.contributor_github_username}.
-
-**Next Step:** @${bounty.contributor_github_username} can claim their **${bounty.bounty_amount} ${bounty.currency}** reward!
-
----
-*Powered by [GitWork](https://gitwork.dev) 🚀*`;
+    // Don't post "ready to claim" comment when issue is closed
+    // because the claim happens so quickly it creates redundant comments
+    console.log(`ℹ️  Skipping "ready to claim" comment for issue #${issue.number} - bounty will be claimed soon`);
+    return; // Exit early, don't post comment
   } else {
     // Issue closed but bounty not claimed yet
     comment = `## 📌 Issue Closed
 
-This issue has been closed. The bounty status is: **${bounty.status}**.
+This issue has been closed. 
+
+**Bounty Status:** ${bounty.status}
 
 ---
 *Powered by [GitWork](https://gitwork.dev) 🚀*`;
@@ -173,6 +172,64 @@ This issue has been closed. The bounty status is: **${bounty.status}**.
     console.log(`💬 Posted completion comment on issue #${issue.number}`);
   } catch (error) {
     console.error(`❌ Error posting completion comment:`, error.message);
+  }
+});
+
+/**
+ * Handle pull request opened events
+ * Post a comment on the issue when a PR is created to resolve it
+ */
+webhooks.on('pull_request.opened', async ({ payload }) => {
+  const { pull_request, installation, repository } = payload;
+  
+  console.log(`📝 PR #${pull_request.number} opened by ${pull_request.user.login}`);
+  
+  // Extract issue numbers from PR body or title
+  const issueReferences = extractIssueReferences(pull_request.body || '', pull_request.title);
+  
+  if (issueReferences.length === 0) {
+    console.log(`ℹ️  No issue references found in PR #${pull_request.number}`);
+    return;
+  }
+  
+  // Post comment on each referenced issue
+  for (const issueNumber of issueReferences) {
+    const bounty = getBountyByIssue(
+      repository.owner.login,
+      repository.name,
+      issueNumber
+    );
+    
+    if (!bounty) {
+      continue; // Not a bounty issue
+    }
+    
+    // Post notification on the issue
+    const comment = `## 🔧 Pull Request Created!
+
+@${pull_request.user.login} has submitted a pull request to resolve this issue: #${pull_request.number}
+
+**Bounty:** ${bounty.bounty_amount} ${bounty.currency}
+**Status:** Awaiting review and merge from repository owner
+
+Once the PR is reviewed and merged, @${pull_request.user.login} will be able to claim the bounty! 🎯
+
+---
+*Powered by [GitWork](https://gitwork.dev) 🚀*`;
+    
+    try {
+      await postIssueComment(
+        installation.id,
+        repository.owner.login,
+        repository.name,
+        issueNumber,
+        comment
+      );
+      
+      console.log(`✅ PR notification posted on issue #${issueNumber}`);
+    } catch (error) {
+      console.error(`❌ Error posting PR notification on issue:`, error);
+    }
   }
 });
 
@@ -248,20 +305,22 @@ webhooks.on('pull_request.closed', async ({ payload }) => {
     }
     
     // Also post a comment on the PR itself
-    const prComment = `## 🎉 Bounty Unlocked!
+    const prComment = `## 🎉 PR Merged - Bounty Unlocked!
 
-Great work @${pull_request.user.login}! This PR resolves issue #${issueNumber} which has a **${bounty.bounty_amount} ${bounty.currency}** bounty attached.
+**Awesome work @${pull_request.user.login}!** 
 
-**Next Steps:**
-1. Wait for the issue to be closed
-2. Visit your claim link: [Claim ${bounty.bounty_amount} ${bounty.currency}](${claimUrl})
-3. Sign in with GitHub and provide your Solana wallet address
-4. Receive your reward! 💰
+This PR successfully resolved issue #${issueNumber} which has a **${bounty.bounty_amount} ${bounty.currency}** bounty!
 
-Thank you for contributing to open source! 🚀
+### 💰 Claim Your Reward:
+1. Click here to claim: **[Claim ${bounty.bounty_amount} ${bounty.currency}](${claimUrl})**
+2. Sign in with your GitHub account
+3. Provide your Solana wallet address
+4. Receive your payment instantly! ⚡
+
+Your contribution to open source just got rewarded. Thank you! 🚀
 
 ---
-*Powered by [GitWork](https://gitwork.dev)*`;
+*Automated by [GitWork](https://gitwork.dev) - Making open source sustainable*`;
     
     try {
       // Post comment on PR using Octokit
@@ -292,7 +351,8 @@ Thank you for contributing to open source! 🚀
  */
 function extractIssueReferences(body, title) {
   const text = `${title}\n${body}`;
-  const pattern = /(?:fix|fixes|fixed|close|closes|closed|resolve|resolves|resolved)\s+#(\d+)/gi;
+  // Updated pattern to handle "Fixing #123", "Fix Issue #123", "Fixes #123", "Closes #456", etc.
+  const pattern = /(?:fix|fixes|fixed|fixing|close|closes|closed|resolve|resolves|resolved)(?:\s+issue)?\s+#(\d+)/gi;
   const matches = [];
   let match;
   
