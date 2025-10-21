@@ -50,4 +50,3 @@ export function isSupportedCurrency(currency) {
   return supported.includes(currency.toUpperCase());
 }
 
-

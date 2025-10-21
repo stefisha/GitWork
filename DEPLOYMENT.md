@@ -389,4 +389,3 @@ Use GitHub App's "Advanced" tab to redeliver webhooks
 
 Your GitWork instance is now running and ready to process real bounties.
 
-

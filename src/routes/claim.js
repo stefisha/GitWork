@@ -127,7 +127,7 @@ router.get('/:bountyId', (req, res) => {
                 <div class="detail-row">
                   <span class="detail-label">Transaction</span>
                   <span class="detail-value">
-                    <a href="https://explorer.solana.com/tx/${bounty.transaction_signature}?cluster=devnet" target="_blank">
+                    <a href="https://explorer.solana.com/tx/${bounty.transaction_signature}" target="_blank">
                       View on Explorer
                     </a>
                   </span>
@@ -509,7 +509,7 @@ router.get('/:bountyId/success', (req, res) => {
           ${tx ? `
             <div class="tx-link">
               <strong>Transaction:</strong><br>
-              <a href="https://explorer.solana.com/tx/${tx}?cluster=devnet" target="_blank">
+              <a href="https://explorer.solana.com/tx/${tx}" target="_blank">
                 ${tx}
               </a>
             </div>

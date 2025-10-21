@@ -473,4 +473,3 @@ src/index.js
 
 **These diagrams show the complete flow of GitWork from all angles!**
 
-

@@ -19,4 +19,3 @@ CLAIM_BASE_URL=http://localhost:3000
 
 # Database
 DATABASE_PATH=./data/gitwork.db
-

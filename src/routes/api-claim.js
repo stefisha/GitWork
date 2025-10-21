@@ -96,7 +96,7 @@ Congratulations! The bounty has been successfully claimed by @${githubUser}.
 
 **Amount:** ${bounty.bounty_amount} ${bounty.currency}
 **Recipient:** \`${walletAddress}\`
-**Transaction:** [View on Solana Explorer](https://explorer.solana.com/tx/${transactionSignature}?cluster=devnet)
+**Transaction:** [View on Solana Explorer](https://explorer.solana.com/tx/${transactionSignature})
 
 ---
 *Powered by [GitWork](https://gitwork.dev) 🚀*`;
@@ -129,5 +129,4 @@ Congratulations! The bounty has been successfully claimed by @${githubUser}.
 });
 
 export default router;
-
 

@@ -91,38 +91,8 @@ export async function createBountyWallet(bountyId) {
     const walletAddress = wallet.address;
     console.log(`✅ Privy Solana wallet created: ${walletAddress}`);
     console.log(`🔑 Wallet ID: ${wallet.id}`);
-    
-    // Fund the wallet with SOL for transaction fees
-    try {
-      console.log(`💰 Funding escrow wallet with SOL for transaction fees...`);
-      
-      const faucetResponse = await fetch('https://api.devnet.solana.com', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'requestAirdrop',
-          params: [walletAddress, 100000000], // 0.1 SOL in lamports (enough for many transactions)
-        }),
-      });
-      
-      const faucetResult = await faucetResponse.json();
-      
-      if (faucetResult.error) {
-        console.warn(`⚠️  SOL airdrop failed: ${faucetResult.error.message}`);
-        console.log(`⚠️  Wallet created but may need manual SOL funding for transaction fees`);
-      } else {
-        console.log(`✅ SOL airdrop successful: ${faucetResult.result}`);
-        console.log(`💰 Escrow wallet funded with 0.1 SOL for transaction fees`);
-      }
-      
-    } catch (error) {
-      console.warn(`⚠️  Failed to fund escrow wallet with SOL: ${error.message}`);
-      console.log(`⚠️  Wallet created but may need manual SOL funding for transaction fees`);
-    }
+    console.log(`📬 Escrow wallet created: ${walletAddress}`);
+    console.log(`ℹ️  Note: Transaction fees will be paid by the fee payer wallet`);
     
     return walletAddress;
     
@@ -197,27 +167,16 @@ export async function transferBountyFunds(escrowWalletAddress, recipientAddress,
     const feePayerBalance = await connection.getBalance(feePayer.publicKey);
     console.log(`💰 Fee payer SOL balance: ${feePayerBalance / 1e9} SOL`);
     
-    if (feePayerBalance < 5000) { // Less than 0.000005 SOL
-      console.log(`⚠️  Fee payer needs SOL. Requesting from devnet faucet...`);
-      
-      const faucetResponse = await fetch('https://api.devnet.solana.com', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'requestAirdrop',
-          params: [feePayer.publicKey.toBase58(), 100000000], // 0.1 SOL
-        }),
-      });
-      
-      const faucetResult = await faucetResponse.json();
-      if (faucetResult.error) {
-        throw new Error(`Faucet request failed: ${faucetResult.error.message}`);
-      }
-      
-      console.log(`✅ Fee payer SOL airdrop successful: ${faucetResult.result}`);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    // MAINNET: Alert if fee payer balance is low
+    if (feePayerBalance < 5000000) { // Less than 0.005 SOL
+      console.error(`🚨 WARNING: Fee payer SOL balance is LOW: ${feePayerBalance / 1e9} SOL`);
+      console.error(`   Please fund wallet: ${feePayer.publicKey.toBase58()}`);
+      console.error(`   Minimum recommended: 0.01 SOL`);
+    }
+    
+    if (feePayerBalance < 5000) { // Less than 0.000005 SOL (critical)
+      console.error(`🚨 CRITICAL: Fee payer out of SOL!`);
+      throw new Error(`Insufficient SOL for transaction fees. Fee payer has ${feePayerBalance / 1e9} SOL. Please fund: ${feePayer.publicKey.toBase58()}`);
     }
 
     // Get token accounts
