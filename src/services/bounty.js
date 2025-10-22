@@ -47,30 +47,43 @@ export async function createBounty({
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending_deposit')
   `);
   
-  const result = stmt.run(
-    githubIssueId,
-    githubRepoOwner,
-    githubRepoName,
-    githubIssueNumber,
-    bountyAmount,
-    currency,
-    walletAddress,
-    null, // Privy manages the private key, we don't store it
-    installationId
-  );
-  
-  logActivity(result.lastInsertRowid, 'bounty_created', { 
-    amount: bountyAmount, 
-    currency,
-    walletAddress: walletAddress
-  });
-  
-  return {
-    id: result.lastInsertRowid,
-    escrowWallet: walletAddress,
-    amount: bountyAmount,
-    currency
-  };
+  try {
+    const result = stmt.run(
+      githubIssueId,
+      githubRepoOwner,
+      githubRepoName,
+      githubIssueNumber,
+      bountyAmount,
+      currency,
+      walletAddress,
+      null, // Privy manages the private key, we don't store it
+      installationId
+    );
+    
+    logActivity(result.lastInsertRowid, 'bounty_created', { 
+      amount: bountyAmount, 
+      currency,
+      walletAddress: walletAddress
+    });
+    
+    return {
+      id: result.lastInsertRowid,
+      escrowWallet: walletAddress,
+      amount: bountyAmount,
+      currency
+    };
+  } catch (error) {
+    if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+      console.log(`Bounty already exists for issue #${githubIssueNumber} (race condition detected)`);
+      // Return the existing bounty
+      const existing = getBountyByIssue(githubRepoOwner, githubRepoName, githubIssueNumber);
+      if (existing) {
+        return existing;
+      }
+      throw new Error('Bounty already exists but could not retrieve it');
+    }
+    throw error;
+  }
 }
 
 /**
