@@ -102,20 +102,6 @@ webhooks.on('issues.unlabeled', async ({ payload }) => {
     }
   }
 });
-    
-    const bounty = getBountyByIssue(
-      repository.owner.login,
-      repository.name,
-      issue.number
-    );
-    
-    if (bounty && bounty.status === 'pending_deposit') {
-      // Only allow cancellation if not yet deposited
-      updateBountyStatus(bounty.id, 'cancelled');
-      console.log(`✅ Bounty cancelled for issue #${issue.number}`);
-    }
-  }
-});
 
 /**
  * Handle issue closed events
