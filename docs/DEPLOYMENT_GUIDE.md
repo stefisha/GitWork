@@ -1,10 +1,21 @@
-# 🚀 GitWork GCP VM Deployment Guide
+# 🚀 GitWork Production Deployment Guide
 
-## 📋 Your VM Details
-- **SSH:** `stefanhrmail@34.32.66.109`
-- **OS:** Debian
-- **Domain:** gitwork.io (Namecheap)
-- **External IP:** 34.32.66.109
+Complete guide for deploying GitWork to a production server (VPS/VM).
+
+## 📋 Before You Begin
+
+You'll need:
+- **Server:** Ubuntu/Debian VPS (2GB RAM minimum)
+- **Domain:** Registered domain name
+- **SSH Access:** Root or sudo privileges
+- **GitHub:** Repository with your code
+- **Credentials:** GitHub App, Privy, Solana RPC, fee payer wallet
+
+**Example setup:**
+- **SSH:** `user@your-server-ip`
+- **OS:** Ubuntu 22.04 / Debian 11+
+- **Domain:** yourdomain.com
+- **External IP:** Your server's public IP
 
 ---
 
@@ -12,18 +23,19 @@
 
 ### **Step 1: Point Domain to VM**
 
-**In Namecheap DNS settings for gitwork.io:**
+**In your DNS provider (Namecheap, Cloudflare, etc.):**
 
-1. Log into Namecheap
-2. Go to Domain List → gitwork.io → Manage
-3. Advanced DNS tab
-4. Add/Update these records:
+1. Log into your DNS provider
+2. Go to DNS management for your domain
+3. Add/Update these A records:
 
 ```
 Type    Host    Value               TTL
-A       @       34.32.66.109        Automatic
-A       www     34.32.66.109        Automatic
+A       @       YOUR_SERVER_IP      Automatic
+A       www     YOUR_SERVER_IP      Automatic
 ```
+
+Replace `YOUR_SERVER_IP` with your actual server IP address.
 
 5. Save changes
 6. Wait 5-10 minutes for DNS propagation

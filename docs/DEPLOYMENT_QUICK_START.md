@@ -1,31 +1,30 @@
-# ⚡ GitWork GCP Deployment - Quick Start
+# ⚡ GitWork Quick Deployment
 
-## 🎯 **Your Details**
-- **VM IP:** 34.32.66.109
-- **SSH:** `ssh stefanhrmail@34.32.66.109`
-- **Domain:** gitwork.io
-- **OS:** Debian
+Lightning-fast deployment guide for experienced users.
+
+## 🎯 **Prerequisites**
+
+- VPS/VM with Ubuntu/Debian
+- Domain name
+- SSH access
+- GitHub repo ready
 
 ---
 
 ## 📋 **5-Minute Checklist**
 
-### **BEFORE SSH'ing (Do on Windows):**
-
-**1. Point DNS (Namecheap):**
+### **1. Point DNS:**
 ```
-gitwork.io    →  A Record  →  34.32.66.109
-www.gitwork.io →  A Record  →  34.32.66.109
+yourdomain.com    →  A Record  →  YOUR_SERVER_IP
+www.yourdomain.com →  A Record  →  YOUR_SERVER_IP
 ```
 
-**2. Push to GitHub:**
+### **2. Push to GitHub:**
 ```bash
-cd C:\Users\Stefan\OneDrive\Desktop\GitWork
-git init
+cd /path/to/gitwork
 git add .
 git commit -m "Initial deployment"
-git remote add origin https://github.com/stefisha/gitwork.git
-git push -u origin main
+git push origin main
 ```
 
 ---
