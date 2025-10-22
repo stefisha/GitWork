@@ -90,8 +90,8 @@ webhooks.on('issues.unlabeled', async ({ payload }) => {
     
     try {
       await cancelBountyAndRefund(
-        issue.repository.owner.login,
-        issue.repository.name,
+        repository.owner.login,
+        repository.name,
         issue.number,
         installation.id
       );

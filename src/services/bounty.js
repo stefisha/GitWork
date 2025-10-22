@@ -461,8 +461,9 @@ I found an unsupported currency in your bounty label: **${bountyInfo.currency}**
   }
   
   // Create new bounty with error handling for race conditions
+  let bounty;
   try {
-    const bounty = await createBounty({
+    bounty = await createBounty({
       githubIssueId: issue.id,
       githubRepoOwner: issue.repository.owner.login,
       githubRepoName: issue.repository.name,
@@ -471,8 +472,6 @@ I found an unsupported currency in your bounty label: **${bountyInfo.currency}**
       currency: bountyInfo.currency,
       installationId: installationId
     });
-    
-    return bounty;
   } catch (error) {
     if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       console.log(`Bounty already exists for issue #${issue.number} (race condition detected)`);
