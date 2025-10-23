@@ -22,9 +22,8 @@ router.get('/search', (req, res) => {
         b.github_repo_owner as owner,
         b.github_repo_name as repo,
         b.github_issue_number as issue_number,
-        b.github_issue_title as issue_title,
         b.created_at,
-        b.claimed_by_github_username as claimed_by,
+        b.contributor_github_username as claimed_by,
         b.claimed_at,
         (b.github_repo_owner || '/' || b.github_repo_name) as full_repo_name
       FROM bounties b
@@ -33,17 +32,16 @@ router.get('/search', (req, res) => {
     
     const params = [];
     
-    // If query provided, filter by repo name, owner, or issue title
+    // If query provided, filter by repo name or owner
     if (query && query.trim() !== '') {
       sql += `
         AND (
           LOWER(b.github_repo_name) LIKE LOWER(?) OR
-          LOWER(b.github_repo_owner) LIKE LOWER(?) OR
-          LOWER(b.github_issue_title) LIKE LOWER(?)
+          LOWER(b.github_repo_owner) LIKE LOWER(?)
         )
       `;
       const searchTerm = `%${query.trim()}%`;
-      params.push(searchTerm, searchTerm, searchTerm);
+      params.push(searchTerm, searchTerm);
     }
     
     sql += ' ORDER BY b.created_at DESC LIMIT 100';
@@ -54,7 +52,7 @@ router.get('/search', (req, res) => {
     const results = bounties.map(b => ({
       id: b.id,
       name: `${b.owner}/${b.repo} #${b.issue_number}`,
-      description: b.issue_title || 'No title',
+      description: `Issue #${b.issue_number}`,
       githubUrl: `https://github.com/${b.owner}/${b.repo}/issues/${b.issue_number}`,
       amount: b.amount,
       currency: b.currency.toUpperCase(),
