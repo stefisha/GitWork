@@ -43,6 +43,14 @@ const HomePage = () => {
           </p>
         </div>
 
+        {/* Search Bar */}
+        <div className="flex justify-center">
+          <SearchBar 
+            onSearch={handleSearch}
+            className="w-full max-w-2xl"
+          />
+        </div>
+
         {/* Search Results */}
         {isSearching && (
           <div className="text-white text-lg">
