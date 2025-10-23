@@ -21,45 +21,42 @@ const ContactPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form submitted!', formData);
     setIsSubmitting(true);
     setSubmitStatus(null);
 
+    // Show alert for debugging
+    alert('Form submitted! Check console for details.');
+
     try {
+      console.log('Starting EmailJS...');
+      
       // Initialize EmailJS
       emailjs.init('f6bns0GdOjJmKdJje');
+      console.log('EmailJS initialized');
       
-      // Send email using EmailJS - try different template IDs
-      let result;
-      const templateIds = ['template_1', 'template_default', 'template_contact'];
-      
-      for (const templateId of templateIds) {
-        try {
-          console.log(`Trying template: ${templateId}`);
-          result = await emailjs.send(
-            'service_fscd3dl',
-            templateId,
-            {
-              from_name: formData.name,
-              from_email: formData.email,
-              subject: formData.subject,
-              message: formData.message,
-              to_email: 'support@gitwork.io'
-            }
-          );
-          console.log(`Template ${templateId} succeeded:`, result);
-          break;
-        } catch (templateError) {
-          console.log(`Template ${templateId} failed:`, templateError);
-          if (templateId === templateIds[templateIds.length - 1]) {
-            throw templateError; // Re-throw the last error
-          }
+      // Try to send email
+      console.log('Attempting to send email...');
+      const result = await emailjs.send(
+        'service_fscd3dl',
+        'template_1',
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          to_email: 'support@gitwork.io'
         }
-      }
+      );
+      
+      console.log('EmailJS result:', result);
 
       if (result.status === 200) {
+        console.log('Email sent successfully!');
         setSubmitStatus('success');
         setFormData({ name: '', email: '', subject: '', message: '' });
       } else {
+        console.log('Email failed with status:', result.status);
         setSubmitStatus('error');
       }
       
@@ -67,6 +64,8 @@ const ContactPage = () => {
       console.error('Contact form error:', error);
       console.error('Error details:', error.message);
       console.error('Error code:', error.code);
+      console.error('Full error object:', error);
+      alert('Error: ' + error.message);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
