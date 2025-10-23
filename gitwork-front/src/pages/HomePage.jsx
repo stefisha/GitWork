@@ -27,7 +27,7 @@ const HomePage = () => {
       }}
     >
       {/* Main Content */}
-      <div className="text-center space-y-4 sm:space-y-8 max-w-4xl w-full -mt-16 sm:-mt-48">
+      <div className="text-center space-y-4 sm:space-y-8 max-w-4xl w-full -mt-24 sm:-mt-56">
         {/* Logo and Branding */}
         <div className="space-y-0">
           <img 

@@ -58,7 +58,7 @@ const ContactPage = () => {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4 sm:p-8"
+      className="min-h-screen flex items-center justify-center p-4 sm:p-8 -mt-16"
       style={{ background: '#0d1117' }}
     >
       <div className="max-w-2xl w-full">

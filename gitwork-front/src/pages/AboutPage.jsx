@@ -5,7 +5,7 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen" style={{ background: '#0d1117' }}>
       {/* Hero Section */}
-      <section className="py-20 px-8">
+      <section className="py-12 px-8">
         <div className="max-w-6xl mx-auto text-center">
           <div className="inline-block px-4 py-2 rounded-full text-sm font-medium mb-6" style={{ background: '#161b22', border: '1px solid #30363d', color: '#8B5CF6' }}>
             🚀 Live on Solana Mainnet
