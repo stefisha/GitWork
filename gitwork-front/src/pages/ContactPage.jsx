@@ -25,17 +25,28 @@ const ContactPage = () => {
     setSubmitStatus(null);
 
     try {
-      // For now, we'll use a simple mailto link as fallback
-      // This will open the user's email client with pre-filled content
-      const mailtoLink = `mailto:support@gitwork.io?subject=${encodeURIComponent(`[GitWork Contact] ${formData.subject}`)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\nSubject: ${formData.subject}\n\nMessage:\n${formData.message}`)}`;
+      // Initialize EmailJS with your public key
+      emailjs.init('8pr5zlixwWjlJhXzE');
       
-      // Open email client
-      window.location.href = mailtoLink;
-      
-      // Show success message
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
-      
+      // Send email using EmailJS
+      const result = await emailjs.send(
+        'service_fscd3dl', // Your Gmail service ID
+        'template_default', // Default template (should exist)
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          to_email: 'support@gitwork.io'
+        }
+      );
+
+      if (result.status === 200) {
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+      }
     } catch (error) {
       console.error('Contact form error:', error);
       setSubmitStatus('error');
@@ -94,7 +105,7 @@ const ContactPage = () => {
           {submitStatus === 'success' && (
             <div className="mb-6 p-4 rounded-lg" style={{ background: '#1a472a', border: '1px solid #238636' }}>
               <p className="text-green-400 text-sm sm:text-base">
-                ✅ Your email client should open with a pre-filled message. Please send it to complete your contact request.
+                ✅ Thank you! Your message has been sent successfully. We'll get back to you soon.
               </p>
             </div>
           )}
