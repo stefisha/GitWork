@@ -1,38 +1,138 @@
-# Deployment Configuration Files
+# Deployment
 
-This folder contains configuration files and scripts for deploying GitWork.
+This folder contains deployment scripts and configuration files for GitWork.
 
-## 📁 Files
+## 📁 Contents
 
-- **`setup-vm.sh`** - Automated server setup script
+- **`setup-vm.sh`** - Automated setup script for fresh VM/VPS
 - **`nginx-config.conf`** - Nginx reverse proxy configuration
-
-## 📚 Documentation
-
-**All deployment documentation has been moved to the `docs/` folder:**
-
-- **[Deployment Guide](../docs/DEPLOYMENT_GUIDE.md)** - Comprehensive deployment walkthrough
-- **[Quick Start](../docs/DEPLOYMENT_QUICK_START.md)** - Rapid deployment commands
 
 ## 🚀 Quick Deploy
 
+For detailed deployment instructions, see:
+- [docs/DEPLOYMENT_GUIDE.md](../docs/DEPLOYMENT_GUIDE.md) - Complete deployment guide
+- [docs/DEPLOYMENT_QUICK_START.md](../docs/DEPLOYMENT_QUICK_START.md) - Quick reference
+
+## ⚡ One-Command Deploy
+
+On your production server:
+
 ```bash
-# 1. SSH to your server
-ssh user@your-server
+npm run deploy
+```
 
-# 2. Run automated setup
-curl -o setup-vm.sh https://raw.githubusercontent.com/yourusername/gitwork/main/deployment/setup-vm.sh
-chmod +x setup-vm.sh
-sudo ./setup-vm.sh
+This will:
+1. Pull latest code
+2. Install backend dependencies
+3. Install frontend dependencies
+4. Build frontend
+5. Restart PM2 process
 
-# 3. Clone and deploy
-git clone https://github.com/yourusername/gitwork.git
+## 📋 Manual Deployment Steps
+
+### 1. Initial Setup
+
+```bash
+# Clone repository
+git clone https://github.com/your-org/gitwork.git
 cd gitwork
-npm install
 
-# Configure .env, then:
+# Run setup script (first time only)
+chmod +x deployment/setup-vm.sh
+./deployment/setup-vm.sh
+```
+
+### 2. Configure Environment
+
+```bash
+# Edit .env file
+nano .env
+
+# Add your configuration:
+# - GitHub App credentials
+# - Privy credentials
+# - Solana RPC and keys
+# - Domain and URLs
+```
+
+### 3. Set Up Database
+
+```bash
+npm run db:migrate
+```
+
+### 4. Build Frontend
+
+```bash
+cd gitwork-front
+npm install
+npm run build
+cd ..
+```
+
+### 5. Start with PM2
+
+```bash
 pm2 start src/index.js --name gitwork
 pm2 save
 ```
 
-See [Deployment Guide](../docs/DEPLOYMENT_GUIDE.md) for detailed instructions.
+### 6. Configure Nginx
+
+```bash
+# Copy nginx config
+sudo cp deployment/nginx-config.conf /etc/nginx/sites-available/gitwork
+sudo ln -s /etc/nginx/sites-available/gitwork /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+### 7. Set Up SSL
+
+```bash
+sudo certbot --nginx -d yourdomain.com
+```
+
+## 🔄 Updating Production
+
+```bash
+cd ~/apps/gitwork
+git pull origin main
+npm install
+cd gitwork-front
+npm install
+npm run build
+cd ..
+pm2 restart gitwork
+```
+
+Or use the one-command deploy:
+
+```bash
+npm run deploy
+```
+
+## 🔍 Monitoring
+
+```bash
+# View logs
+pm2 logs gitwork
+
+# Check status
+pm2 status
+
+# Monitor
+pm2 monit
+```
+
+## 🛠️ Troubleshooting
+
+See [docs/DEPLOYMENT_GUIDE.md](../docs/DEPLOYMENT_GUIDE.md#troubleshooting) for common issues and solutions.
+
+## 📝 Requirements
+
+- Node.js 18+
+- PM2
+- Nginx
+- Certbot (for SSL)
+- Domain with DNS configured

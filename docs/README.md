@@ -263,13 +263,14 @@ CREATE TABLE activity_log (
 
 Want to contribute to GitWork itself?
 
-1. Check existing issues or create a new one
-2. Fork the repository
-3. Create a feature branch
-4. Make your changes
-5. Submit a pull request
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for detailed contribution guidelines including:
+- Code of conduct
+- Development workflow  
+- Pull request guidelines
+- Code style standards
+- Testing requirements
 
-See [SETUP_GUIDE.md](./SETUP_GUIDE.md) for local development setup.
+Also check [SETUP_GUIDE.md](./SETUP_GUIDE.md) for local development setup.
 
 ## 📝 License
 
