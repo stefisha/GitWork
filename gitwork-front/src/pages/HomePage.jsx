@@ -21,24 +21,24 @@ const HomePage = () => {
 
   return (
     <div 
-      className="h-screen flex flex-col items-center justify-center p-8 relative"
+      className="h-screen flex flex-col items-center justify-center relative overflow-hidden"
       style={{
         background: '#0d1117'
       }}
     >
       {/* Main Content */}
-      <div className="text-center space-y-8 max-w-4xl w-full -mt-32">
+      <div className="text-center space-y-6 max-w-4xl w-full px-8">
         {/* Logo and Branding */}
-        <div className="space-y-0">
+        <div className="space-y-2">
           <img 
             src={octopusLogo} 
             alt="GitWork Logo" 
-            className="w-20 h-20 mx-auto"
+            className="w-16 h-16 mx-auto"
           />
-          <h1 className="text-8xl font-bold text-white">
+          <h1 className="text-6xl font-bold text-white">
             GitWork
           </h1>
-          <p className="text-5xl font-medium text-white">
+          <p className="text-3xl font-medium text-white">
             make money on github
           </p>
         </div>
@@ -108,8 +108,8 @@ const HomePage = () => {
       </div>
 
       {/* Alpha Launch Footer */}
-      <div className="absolute bottom-12 left-0 right-0">
-        <p className="text-base text-gray-400 text-center">
+      <div className="absolute bottom-6 left-0 right-0 px-8">
+        <p className="text-sm text-gray-400 text-center">
           🚀 This is alpha launch - we are onboarding projects. If you want your repo and issues listed, contact us at{' '}
           <a 
             href="mailto:support@gitwork.io" 
