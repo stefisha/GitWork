@@ -116,7 +116,7 @@ const HomePage = () => {
       </div>
 
       {/* Alpha Launch Footer */}
-      <div className="absolute bottom-12 left-0 right-0">
+      <div className="absolute bottom-24 left-0 right-0">
         <p className="text-base text-gray-400 text-center">
           🚀 This is alpha launch - we are onboarding projects. If you want your repo and issues listed, contact us at{' '}
           <a 
