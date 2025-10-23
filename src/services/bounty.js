@@ -308,7 +308,7 @@ ${refundResult ? `- **Refund:** [View Transaction](https://explorer.solana.com/t
 ${refundResult ? '**Funds have been refunded to the original depositor.**' : '**No funds were escrowed, so no refund was necessary.**'}
 
 ---
-*Powered by GitWork - Making open source rewarding* 💎`;
+*Powered by [GitWork](https://gitwork.io) - Making open source rewarding* 💎`;
 
     await postIssueComment(
       installationId,
@@ -361,7 +361,7 @@ ${bountyInfo.labels.map(label => `- \`${label.labelName}\` (${label.amount} ${la
 - \`Octavian:SOL:0.1\` - 0.1 SOL bounty
 
 ---
-*Powered by GitWork - Making open source rewarding* 💎`;
+*Powered by [GitWork](https://gitwork.io) - Making open source rewarding* 💎`;
 
     try {
       await postIssueComment(
@@ -403,7 +403,7 @@ I found an unsupported currency in your bounty label: **${bountyInfo.currency}**
 - \`Octavian:SOL:0.1\` - 0.1 SOL bounty
 
 ---
-*Powered by GitWork - Making open source rewarding* 💎`;
+*Powered by [GitWork](https://gitwork.io) - Making open source rewarding* 💎`;
 
     try {
       await postIssueComment(
