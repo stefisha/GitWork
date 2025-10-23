@@ -94,13 +94,19 @@ router.get('/profile', (req, res) => {
  * Check if user is authenticated
  */
 router.get('/status', (req, res) => {
+  console.log('🔍 Checking user status...');
+  console.log('Session exists:', !!req.session);
+  console.log('GitHub user in session:', !!req.session?.githubUser);
+  
   if (req.session && req.session.githubUser) {
+    console.log('✅ User authenticated:', req.session.githubUser.login);
     res.json({
       authenticated: true,
       username: req.session.githubUser.login,
       avatar: req.session.githubUser.avatar_url
     });
   } else {
+    console.log('❌ User not authenticated');
     res.json({
       authenticated: false
     });
