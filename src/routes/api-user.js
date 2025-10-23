@@ -31,7 +31,7 @@ router.get('/profile', (req, res) => {
         b.github_repo_name as repo,
         b.github_issue_number as issue_number,
         b.claimed_at,
-        b.transaction_signature as transaction,
+        b.transaction_signature as tx_signature,
         (b.github_repo_owner || '/' || b.github_repo_name) as full_repo_name
       FROM bounties b
       WHERE 
@@ -59,7 +59,7 @@ router.get('/profile', (req, res) => {
       issueTitle: `Issue #${b.issue_number}`,
       claimedAt: b.claimed_at,
       githubUrl: `https://github.com/${b.owner}/${b.repo}/issues/${b.issue_number}`,
-      transactionUrl: b.transaction ? `https://solscan.io/tx/${b.transaction}` : null
+      transactionUrl: b.tx_signature ? `https://solscan.io/tx/${b.tx_signature}` : null
     }));
     
     res.json({
