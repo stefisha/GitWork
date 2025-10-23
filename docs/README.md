@@ -1,327 +1,163 @@
 # GitWork Documentation
 
-Welcome to the GitWork documentation! This folder contains comprehensive guides for using and deploying GitWork.
-
-## 📚 Documentation Index
-
-### For Users
-
-- **[Repo Owner Flow](./REPO_OWNER_FLOW.md)** - How to create bounties on your GitHub issues
-- **[Contributor Flow](./CONTRIBUTOR_FLOW.md)** - How to solve issues and claim bounties
-- **[Quick Reference](./QUICK_REFERENCE.md)** - Common commands and workflows
-- **[Visual Flow](./VISUAL_FLOW.md)** - Diagrams showing how GitWork works
-
-### For Developers
-
-- **[Architecture](./ARCHITECTURE.md)** - System design and technical overview
-- **[Setup Guide](./SETUP_GUIDE.md)** - Local development setup
-- **[Frontend Integration](./FRONTEND_INTEGRATION.md)** - Connecting frontend to backend
-- **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Production deployment
-- **[Deployment Quick Start](./DEPLOYMENT_QUICK_START.md)** - Rapid deployment commands
-
-### Specific Topics
-
-- **[Mainnet Setup](./MAINNET_SETUP.md)** - Configuring for Solana mainnet
-
-## 🚀 Quick Start
-
-### For Repo Owners
-
-1. **Install GitWork bot** on your repository
-2. **Create an issue** with a bounty label: `Octavian:USDC:50`
-3. **Fund the escrow wallet** shown in the bot's comment
-4. **Wait for contributors** to solve it!
-
-See [Repo Owner Flow](./REPO_OWNER_FLOW.md) for details.
-
-### For Contributors
-
-1. **Find an issue** with an `Octavian:` label and ✅ funded
-2. **Create a PR** that references the issue (e.g., "Fixes #123")
-3. **Get your PR merged** by the maintainer
-4. **Claim your bounty** via the link in the bot's comment
-
-See [Contributor Flow](./CONTRIBUTOR_FLOW.md) for details.
-
-## 🏗️ What is GitWork?
-
-GitWork turns GitHub issues into instant bounties on the Solana blockchain.
-
-**The Problem:**
-- Open source runs the internet
-- Most developers building it work for free
-- Maintainers burn out, contributors aren't compensated
-- No simple way to pay for contributions (beyond sponsorships and goodwill)
-
-**The Solution:**
-GitWork makes it trivial to:
-- **Create bounties** - Just add a label to a GitHub issue
-- **Escrow funds automatically** - Solana wallets created per bounty
-- **Pay contributors** - Automatic payout when PR is merged
-- **No middlemen** - Direct on-chain payments
-
-## 💡 Key Features
-
-### ✅ Simple Bounty Creation
-```markdown
-# Just add a label to your issue:
-Octavian:USDC:50
-```
-
-### ✅ Automatic Escrow
-- Unique Solana wallet created for each bounty
-- Funds held securely until work is complete
-- No manual intervention needed
-
-### ✅ Instant Payouts
-- PR merged → bounty claimable
-- One-click claim via dashboard
-- Funds arrive in seconds
-
-### ✅ Multiple Currencies
-- **USDC** - Stablecoin (pegged to USD)
-- **SOL** - Native Solana token
-
-### ✅ Zero Fees
-- No platform fees (currently)
-- Transaction fees paid by GitWork
-- Contributors receive full bounty amount
-
-### ✅ Full Transparency
-- All transactions on Solana blockchain
-- View on Solana Explorer
-- Complete activity log
-
-## 🔧 Technology Stack
-
-- **Backend**: Node.js + Express
-- **Database**: SQLite (better-sqlite3)
-- **Blockchain**: Solana (Mainnet-Beta)
-- **Wallet Management**: Privy (embedded wallets)
-- **GitHub Integration**: GitHub Apps + Webhooks
-- **Authentication**: GitHub OAuth (Passport.js)
-
-## 📋 Supported Label Formats
-
-```
-Octavian:USDC:50     ✅ 50 USDC bounty
-Octavian:SOL:0.1     ✅ 0.1 SOL bounty
-octavian:usdc:25     ✅ Case insensitive
-Octavian:USDC:12.5   ✅ Decimals allowed
-
-Octavian:ETH:1       ❌ ETH not supported
-Octavian:USDC        ❌ Amount required
-USDC:50              ❌ Must start with "Octavian:"
-```
-
-## 🔐 Security Features
-
-### Currency Validation
-- Only USDC and SOL accepted
-- Rejects unsupported currencies (ETH, BTC, etc.)
-- Clear error messages
-
-### Deposit Validation
-- Ensures correct currency is deposited
-- Validates exact amount (or more)
-- Detects wrong token deposits
-
-### Multiple Labels Protection
-- Rejects multiple bounty labels on one issue
-- Guides users to fix the issue
-- Prevents accidental double bounties
-
-### Bounty Cancellation
-- Remove label → bounty cancelled
-- Automatic refunds if funds escrowed
-- Cannot cancel after claimed
-
-### Race Condition Handling
-- Handles simultaneous webhook events
-- Prevents duplicate bounties
-- Graceful error recovery
-
-## 🚦 Bounty Lifecycle
-
-```
-┌─────────────────┐
-│ Label Added     │
-│ Octavian:USDC:50│
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Pending Deposit │
-│ (Escrow created)│
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Deposit         │
-│ Confirmed       │
-│ (Funds in)      │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Ready to Claim  │
-│ (PR merged)     │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Claimed         │
-│ (Paid out)      │
-└─────────────────┘
-
-Alternative paths:
-- Label removed → Cancelled (+ refund)
-- Issue closed before merge → Cancelled
-```
-
-## 🌍 Deployment Options
-
-GitWork can be deployed to:
-
-- ✅ **VPS/VM** (recommended for production)
-  - GCP, AWS, DigitalOcean
-  - Full control
-  - Persistent database
-
-- ✅ **PaaS**
-  - Railway, Render, Fly.io
-  - Easy deployment
-  - Auto-scaling
-
-- ⚠️ **Serverless** (not recommended)
-  - SQLite doesn't work well serverless
-  - Complex webhook handling
-  - Consider this only if you migrate to PostgreSQL
-
-See [deployment/](../deployment/) for detailed guides.
-
-## 📊 Database Schema
-
-### Bounties Table
-```sql
-CREATE TABLE bounties (
-  id INTEGER PRIMARY KEY,
-  github_issue_id INTEGER,
-  github_repo_owner TEXT,
-  github_repo_name TEXT,
-  github_issue_number INTEGER,
-  bounty_amount REAL,
-  currency TEXT DEFAULT 'USDC',
-  escrow_wallet_address TEXT,
-  github_installation_id INTEGER,
-  status TEXT DEFAULT 'pending_deposit',
-  contributor_github_username TEXT,
-  pull_request_number INTEGER,
-  transaction_signature TEXT,
-  claim_wallet_address TEXT,
-  cancelled_at DATETIME,
-  refund_transaction TEXT,
-  created_at DATETIME,
-  updated_at DATETIME,
-  deposit_confirmed_at DATETIME,
-  claimed_at DATETIME,
-  UNIQUE(github_repo_owner, github_repo_name, github_issue_number)
-);
-```
-
-### Installations Table
-```sql
-CREATE TABLE installations (
-  id INTEGER PRIMARY KEY,
-  github_installation_id INTEGER UNIQUE,
-  github_account_login TEXT,
-  installed_at DATETIME,
-  uninstalled_at DATETIME
-);
-```
-
-### Activity Log Table
-```sql
-CREATE TABLE activity_log (
-  id INTEGER PRIMARY KEY,
-  bounty_id INTEGER,
-  event_type TEXT,
-  event_data TEXT,
-  created_at DATETIME,
-  FOREIGN KEY (bounty_id) REFERENCES bounties(id)
-);
-```
-
-## 🔗 Important Links
-
-- **GitHub App**: https://github.com/apps/gitwork-io
-- **Production**: https://gitwork.io
-- **Source Code**: https://github.com/yourusername/gitwork
-- **Issues**: https://github.com/yourusername/gitwork/issues
-
-## 🤝 Contributing
-
-Want to contribute to GitWork itself?
-
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for detailed contribution guidelines including:
-- Code of conduct
-- Development workflow  
-- Pull request guidelines
-- Code style standards
-- Testing requirements
-
-Also check [SETUP_GUIDE.md](./SETUP_GUIDE.md) for local development setup.
-
-## 📝 License
-
-[Add your license here]
-
-## 💬 Support
-
-- **Discord**: [Coming soon]
-- **Twitter**: [@GitWork]
-- **Email**: support@gitwork.io
-- **GitHub Issues**: For bugs and feature requests
-
-## 🗺️ Roadmap
-
-### Current Features ✅
-- [x] GitHub App integration
-- [x] USDC bounties
-- [x] SOL bounties
-- [x] Automatic escrow
-- [x] Claim dashboard
-- [x] GitHub OAuth
-- [x] Mainnet support
-- [x] Bounty cancellation & refunds
-- [x] Currency validation
-- [x] Deposit validation
-
-### Planned Features 🚧
-- [ ] Bounty discovery dashboard
-- [ ] Email notifications
-- [ ] Multiple contributors per bounty
-- [ ] Partial bounty claims
-- [ ] Reputation system
-- [ ] Analytics dashboard
-- [ ] Mobile app
-- [ ] Browser extension
-- [ ] Discord bot
-- [ ] More blockchains (Ethereum, Polygon)
-
-## 📈 Stats & Metrics
-
-[Add your metrics here when available]
-
-- **Total Bounties Created**: [X]
-- **Total Value Escrowed**: [X] USDC
-- **Total Bounties Claimed**: [X]
-- **Average Bounty Size**: [X] USDC
-- **Active Repositories**: [X]
+Welcome to GitWork! This documentation will help you understand how to use GitWork to create and claim bounties.
 
 ---
 
-**Made with ❤️ by the GitWork team**
+## 🎯 Quick Links
 
-*Making open source rewarding.*
+### For Repo Owners
+- **[Repo Owner Flow](./REPO_OWNER_FLOW.md)** - Complete guide to creating bounties
+- **[Visual Flow](./VISUAL_FLOW.md)** - Diagrams showing how bounties work
 
+### For Contributors  
+- **[Contributor Flow](./CONTRIBUTOR_FLOW.md)** - Complete guide to claiming bounties
+- **[Quick Reference](./QUICK_REFERENCE.md)** - Common commands and tips
+
+---
+
+## 🚀 Getting Started
+
+### I'm a Repo Owner
+
+**Want to reward contributors for solving issues?**
+
+1. Install the [GitWork GitHub App](https://github.com/apps/gitwork-io)
+2. Add a bounty label to any issue: `gitwork:usdc:50`
+3. Fund the escrow wallet (GitWork bot will tell you where)
+4. Contributors solve it, you merge, they get paid!
+
+📖 **Read:** [Repo Owner Flow](./REPO_OWNER_FLOW.md)
+
+---
+
+### I'm a Contributor
+
+**Want to earn money solving open source issues?**
+
+1. Visit [gitwork.io](https://gitwork.io) to find bounties
+2. Pick an issue and solve it
+3. Submit a PR that references the issue number
+4. Get it merged
+5. Claim your payment instantly!
+
+📖 **Read:** [Contributor Flow](./CONTRIBUTOR_FLOW.md)
+
+---
+
+## 💰 How Bounties Work
+
+### Creating a Bounty
+
+```
+1. Label → gitwork:usdc:50
+2. Escrow wallet created
+3. You fund it → 50 USDC
+4. Bounty goes live
+```
+
+### Claiming a Bounty
+
+```
+1. Find issue with bounty
+2. Submit PR → "Fixes #123"
+3. PR gets merged
+4. Claim link appears
+5. Get paid instantly
+```
+
+---
+
+## 🔧 Supported Label Formats
+
+```
+✅ gitwork:usdc:50     → 50 USDC bounty
+✅ gitwork:sol:0.5     → 0.5 SOL bounty  
+✅ gitwork:usdc:12.5   → 12.5 USDC (decimals OK)
+✅ GitWork:USDC:50     → Case insensitive
+
+❌ gitwork:eth:1       → ETH not supported
+❌ gitwork:usdc        → Amount required
+❌ usdc:50            → Must start with "gitwork:"
+```
+
+---
+
+## 🌍 Currencies
+
+### USDC (Recommended)
+- Stablecoin pegged to $1 USD
+- No price volatility
+- Predictable value
+
+### SOL
+- Solana's native token
+- Fast and low-cost
+- Price varies with crypto market
+
+---
+
+## 🔒 Security
+
+### For Repo Owners
+- Funds held in escrow until work is done
+- Cancel anytime before PR merge for full refund
+- Only exact amount can be claimed
+
+### For Contributors
+- Payment guaranteed once PR is merged
+- Instant payouts (no waiting)
+- Transparent on-chain transactions
+
+---
+
+## 📊 Bounty Status Meanings
+
+- **Pending Deposit** - Bounty created, waiting for funding
+- **Active** - Funded and ready for contributors to work on
+- **Ready to Claim** - PR merged, contributor can claim payment
+- **Claimed** - Payment completed
+- **Cancelled** - Bounty removed (refund issued if funded)
+
+---
+
+## ❓ Common Questions
+
+### Can I create multiple bounties on one issue?
+No, only one bounty label per issue. Remove the old label before adding a new one.
+
+### What if I deposit the wrong amount?
+The bot will detect this and let you know. You'll need to send the exact amount.
+
+### Can I increase a bounty after creating it?
+Remove the old label, add a new one with the higher amount, and fund the new escrow.
+
+### What happens if no one solves the issue?
+Remove the bounty label anytime to cancel and get a full refund.
+
+### How long does claiming take?
+Instantly! Once you click claim and sign with your wallet, funds arrive in seconds.
+
+---
+
+## 💬 Support
+
+Need help?
+
+- **Email:** support@gitwork.io
+- **Website:** [gitwork.io](https://gitwork.io)
+- **Contact Form:** [gitwork.io/contact](https://gitwork.io/contact)
+
+---
+
+## 🎉 Status
+
+**Alpha Launch** - We're onboarding projects!
+
+Want your repository to support GitWork bounties? Email us at support@gitwork.io
+
+---
+
+**Made with 💜 for open source**
+
+*GitWork - Making open source rewarding.*

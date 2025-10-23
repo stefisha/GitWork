@@ -45,3 +45,7 @@ tmp/
 temp/
 .tmp/
 
+# Deployment (private server configs)
+deployment/
+INTERNAL_DOCS.md
+
