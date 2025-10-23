@@ -109,5 +109,28 @@ router.get('/user', (req, res) => {
   }
 });
 
+/**
+ * POST /auth/logout
+ * Logout user and clear session
+ */
+router.post('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error('❌ Logout error:', err);
+      return res.status(500).json({ success: false, error: 'Logout failed' });
+    }
+    
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('❌ Session destroy error:', err);
+        return res.status(500).json({ success: false, error: 'Session destroy failed' });
+      }
+      
+      res.clearCookie('connect.sid');
+      res.json({ success: true, message: 'Logged out successfully' });
+    });
+  });
+});
+
 export default router;
 
