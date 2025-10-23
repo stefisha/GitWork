@@ -21,24 +21,16 @@ const ContactPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted!', formData);
     setIsSubmitting(true);
     setSubmitStatus(null);
 
-    // Show alert for debugging
-    alert('Form submitted! Check console for details.');
-
     try {
-      console.log('Starting EmailJS...');
-      
       // Initialize EmailJS
       emailjs.init('f6bns0GdOjJmKdJje');
-      console.log('EmailJS initialized');
       
-      // Try to send email
-      console.log('Attempting to send email...');
+      // Send email using EmailJS with correct service ID
       const result = await emailjs.send(
-        'service_fscd3dl',
+        'service_3745fg5', // Your correct service ID
         'template_1',
         {
           from_name: formData.name,
@@ -48,24 +40,16 @@ const ContactPage = () => {
           to_email: 'support@gitwork.io'
         }
       );
-      
-      console.log('EmailJS result:', result);
 
       if (result.status === 200) {
-        console.log('Email sent successfully!');
         setSubmitStatus('success');
         setFormData({ name: '', email: '', subject: '', message: '' });
       } else {
-        console.log('Email failed with status:', result.status);
         setSubmitStatus('error');
       }
       
     } catch (error) {
       console.error('Contact form error:', error);
-      console.error('Error details:', error.message);
-      console.error('Error code:', error.code);
-      console.error('Full error object:', error);
-      alert('Error: ' + error.message);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
