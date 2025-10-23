@@ -1,22 +1,6 @@
 import express from 'express';
-import nodemailer from 'nodemailer';
 
 const router = express.Router();
-
-// Create transporter for sending emails
-const createTransporter = () => {
-  // For now, we'll use a simple SMTP configuration
-  // In production, you might want to use a service like SendGrid, Mailgun, etc.
-  return nodemailer.createTransporter({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: process.env.SMTP_PORT || 587,
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER || 'support@gitwork.io',
-      pass: process.env.SMTP_PASS || process.env.EMAIL_PASSWORD
-    }
-  });
-};
 
 /**
  * POST /api/contact
@@ -58,45 +42,27 @@ ${message}
 Sent from GitWork.io contact form
     `.trim();
 
-    // Try to send email
-    try {
-      const transporter = createTransporter();
-      
-      const mailOptions = {
-        from: process.env.SMTP_FROM || 'support@gitwork.io',
-        to: 'support@gitwork.io',
-        subject: `[GitWork Contact] ${subject}`,
-        text: emailContent,
-        replyTo: email
-      };
-
-      await transporter.sendMail(mailOptions);
-      
-      console.log('✅ Contact form email sent successfully');
-      
-      res.json({
-        success: true,
-        message: 'Email sent successfully'
-      });
-
-    } catch (emailError) {
-      console.error('❌ Error sending contact form email:', emailError);
-      
-      // Log the contact form data for manual follow-up
-      console.log('📧 Contact form data (email failed):', {
-        name,
-        email,
-        subject,
-        message,
-        timestamp: new Date().toISOString()
-      });
-
-      // Still return success to user, but log the issue
-      res.json({
-        success: true,
-        message: 'Message received (email service temporarily unavailable)'
-      });
-    }
+    // Log the contact form data for manual follow-up
+    console.log('📧 NEW CONTACT FORM SUBMISSION:');
+    console.log('================================');
+    console.log(`Name: ${name}`);
+    console.log(`Email: ${email}`);
+    console.log(`Subject: ${subject}`);
+    console.log(`Message: ${message}`);
+    console.log(`Timestamp: ${new Date().toISOString()}`);
+    console.log('================================');
+    
+    // For now, we'll just log the data and return success
+    // You can set up email forwarding later or use a service like:
+    // - EmailJS (client-side)
+    // - SendGrid (server-side with API key)
+    // - Mailgun (server-side with API key)
+    // - Or just check the server logs for new submissions
+    
+    res.json({
+      success: true,
+      message: 'Message received! We\'ll get back to you soon.'
+    });
 
   } catch (error) {
     console.error('❌ Error processing contact form:', error);
