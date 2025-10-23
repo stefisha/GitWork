@@ -16,6 +16,8 @@ import webhookRoutes from './routes/webhooks.js';
 import authRoutes from './routes/auth.js';
 import claimRoutes from './routes/claim.js';
 import apiClaimRoutes from './routes/api-claim.js';
+import apiBountiesRoutes from './routes/api-bounties.js';
+import apiUserRoutes from './routes/api-user.js';
 import { runMigrations } from './db/migrate.js';
 import depositMonitor from './services/deposit-monitor.js';
 
@@ -56,6 +58,23 @@ app.use('/api/webhooks', webhookRoutes);
 app.use('/auth', authRoutes);
 app.use('/claim', claimRoutes);
 app.use('/api/claim', apiClaimRoutes);
+app.use('/api/bounties', apiBountiesRoutes);
+app.use('/api/user', apiUserRoutes);
+
+// Serve frontend static files in production
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = join(__dirname, '..', 'gitwork-front', 'dist');
+  app.use(express.static(frontendPath));
+  
+  // Frontend routes - must be AFTER all API routes
+  app.get('*', (req, res) => {
+    // Skip API routes
+    if (req.path.startsWith('/api') || req.path.startsWith('/auth') || req.path.startsWith('/claim')) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    res.sendFile(join(frontendPath, 'index.html'));
+  });
+}
 
 // Simulation endpoint for testing
 app.post('/api/simulate-deposit', async (req, res) => {

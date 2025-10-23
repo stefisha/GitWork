@@ -15,6 +15,7 @@ Welcome to the GitWork documentation! This folder contains comprehensive guides 
 
 - **[Architecture](./ARCHITECTURE.md)** - System design and technical overview
 - **[Setup Guide](./SETUP_GUIDE.md)** - Local development setup
+- **[Frontend Integration](./FRONTEND_INTEGRATION.md)** - Connecting frontend to backend
 - **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - Production deployment
 - **[Deployment Quick Start](./DEPLOYMENT_QUICK_START.md)** - Rapid deployment commands
 
