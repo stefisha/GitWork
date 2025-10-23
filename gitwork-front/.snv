@@ -1,0 +1,4 @@
+# gitwork-front/.env
+#VITE_API_URL=https://gitwork.io/api
+VITE_API_URL=http://localhost:3000
+VITE_GITHUB_OAUTH_URL=https://gitwork.io/auth/github
