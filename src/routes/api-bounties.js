@@ -27,7 +27,7 @@ router.get('/search', (req, res) => {
         b.claimed_at,
         (b.github_repo_owner || '/' || b.github_repo_name) as full_repo_name
       FROM bounties b
-      WHERE status IN ('pending_deposit', 'deposit_confirmed', 'ready_to_claim', 'claimed')
+      WHERE status IN ('deposit_confirmed', 'ready_to_claim')
     `;
     
     const params = [];
