@@ -159,7 +159,7 @@ I detected a deposit in the escrow wallet, but it doesn't match the bounty requi
 **Escrow Wallet:** \`${bounty.escrow_wallet_address}\`
 
 ---
-*Powered by GitWork - Making open source rewarding* 💎`;
+*Powered by [GitWork](https://gitwork.io) - Making open source rewarding* 💎`;
 
     try {
       await postIssueComment(
