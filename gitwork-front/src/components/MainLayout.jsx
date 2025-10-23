@@ -50,22 +50,22 @@ const MainLayout = () => {
       {/* Main Content Area */}
       <div className="flex-1 overflow-auto flex flex-col">
         {/* Header with Sign In/Out */}
-        <header className="flex justify-end items-center p-4" style={{ background: '#0d1117' }}>
+        <header className="flex justify-end items-center p-2 sm:p-4" style={{ background: '#0d1117' }}>
           {!isLoading && (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               {isAuthenticated ? (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   {user?.avatar && (
                     <img 
                       src={user.avatar} 
                       alt="Profile" 
-                      className="w-8 h-8 rounded-full"
+                      className="w-6 h-6 sm:w-8 sm:h-8 rounded-full"
                     />
                   )}
-                  <span className="text-white text-sm">@{user?.username}</span>
+                  <span className="text-white text-xs sm:text-sm hidden sm:inline">@{user?.username}</span>
                   <button
                     onClick={handleSignOut}
-                    className="px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors duration-200"
+                    className="px-2 py-1 sm:px-4 sm:py-2 rounded-lg text-white text-xs sm:text-sm font-medium transition-colors duration-200"
                     style={{ background: '#161b22', border: '1px solid #30363d' }}
                   >
                     Sign Out
@@ -74,7 +74,7 @@ const MainLayout = () => {
               ) : (
                 <button
                   onClick={handleSignIn}
-                  className="px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors duration-200"
+                  className="px-2 py-1 sm:px-4 sm:py-2 rounded-lg text-white text-xs sm:text-sm font-medium transition-colors duration-200"
                   style={{ background: '#161b22', border: '1px solid #30363d' }}
                 >
                   Sign In
