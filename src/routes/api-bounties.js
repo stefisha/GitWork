@@ -109,5 +109,42 @@ router.get('/stats', (req, res) => {
   }
 });
 
+/**
+ * GET /api/bounties/debug
+ * Debug endpoint to see all bounties and their statuses
+ */
+router.get('/debug', (req, res) => {
+  try {
+    const allBounties = db.prepare(`
+      SELECT 
+        id,
+        github_repo_owner,
+        github_repo_name,
+        github_issue_number,
+        bounty_amount,
+        currency,
+        status,
+        contributor_github_username,
+        claimed_at,
+        created_at
+      FROM bounties
+      ORDER BY created_at DESC
+    `).all();
+    
+    res.json({
+      success: true,
+      count: allBounties.length,
+      bounties: allBounties
+    });
+    
+  } catch (error) {
+    console.error('❌ Error getting debug info:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get debug info'
+    });
+  }
+});
+
 export default router;
 
