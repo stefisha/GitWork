@@ -21,7 +21,7 @@ const HomePage = () => {
 
   return (
     <div 
-      className="h-screen flex flex-col items-center justify-center p-4 sm:p-8 relative overflow-hidden"
+      className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 pb-20 sm:pb-32 relative overflow-x-hidden"
       style={{
         background: '#0d1117'
       }}
@@ -118,8 +118,8 @@ const HomePage = () => {
       </div>
 
       {/* Alpha Launch Footer */}
-      <div className="absolute bottom-8 sm:bottom-24 left-0 right-0 px-4">
-        <p className="text-xs sm:text-base text-gray-400 text-center">
+      <div className="fixed bottom-4 sm:bottom-8 left-0 right-0 px-4 z-10">
+        <p className="text-xs sm:text-sm md:text-base text-gray-400 text-center leading-relaxed">
           🚀 This is alpha launch - we are onboarding projects. If you want your repo and issues listed, contact us at{' '}
           <a 
             href="mailto:support@gitwork.io" 
