@@ -7,8 +7,13 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
+    "test": "node --test",
     "db:migrate": "node src/db/migrate.js",
-    "test": "node --test"
+    "db:reset": "rm -f data/gitwork.db && node src/db/migrate.js",
+    "check:balance": "node src/scripts/check-balance.js",
+    "deploy": "git pull && npm install && cd gitwork-front && npm install && npm run build && cd .. && pm2 restart gitwork",
+    "build:frontend": "cd gitwork-front && npm run build && cd ..",
+    "install:all": "npm install && cd gitwork-front && npm install && cd .."
   },
   "keywords": [
     "github",
@@ -31,6 +36,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-session": "^1.18.2",
+    "nodemailer": "^7.0.10",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12"
   },
