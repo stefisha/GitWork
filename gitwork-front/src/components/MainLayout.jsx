@@ -54,23 +54,23 @@ const MainLayout = () => {
       
       {/* Main Content Area */}
       <div className="flex-1 overflow-auto flex flex-col">
-        {/* Header with Sign In/Out - Only show on desktop since sidebar is on top for mobile */}
-        <header className="hidden sm:flex justify-end items-center p-2 sm:p-4" style={{ background: '#0d1117' }}>
+        {/* Header with Sign In/Out - Always visible */}
+        <header className="flex justify-end items-center p-2 sm:p-3 md:p-4 border-b sm:border-b-0" style={{ background: '#0d1117', borderColor: '#30363d' }}>
           {!isLoading && (
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
               {isAuthenticated ? (
-                <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
                   {user?.avatar && (
                     <img 
                       src={user.avatar} 
                       alt="Profile" 
-                      className="w-6 h-6 sm:w-8 sm:h-8 rounded-full"
+                      className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-gray-700"
                     />
                   )}
-                  <span className="text-white text-xs sm:text-sm hidden sm:inline">@{user?.username}</span>
+                  <span className="text-white text-xs sm:text-sm font-medium">@{user?.username}</span>
                   <button
                     onClick={handleSignOut}
-                    className="px-2 py-1 sm:px-4 sm:py-2 rounded-lg text-white text-xs sm:text-sm font-medium transition-colors duration-200"
+                    className="px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 rounded-lg text-white text-xs sm:text-sm font-medium transition-colors duration-200 hover:bg-gray-800"
                     style={{ background: '#161b22', border: '1px solid #30363d' }}
                   >
                     Sign Out
@@ -79,8 +79,8 @@ const MainLayout = () => {
               ) : (
                 <button
                   onClick={handleSignIn}
-                  className="px-2 py-1 sm:px-4 sm:py-2 rounded-lg text-white text-xs sm:text-sm font-medium transition-colors duration-200"
-                  style={{ background: '#161b22', border: '1px solid #30363d' }}
+                  className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-white text-xs sm:text-sm font-medium transition-colors duration-200 hover:bg-purple-700"
+                  style={{ background: '#8B5CF6' }}
                 >
                   Sign In
                 </button>
