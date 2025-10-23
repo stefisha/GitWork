@@ -115,6 +115,19 @@ const HomePage = () => {
         )}
       </div>
 
+      {/* Alpha Launch Footer */}
+      <div className="absolute bottom-8 left-0 right-0">
+        <p className="text-sm text-gray-500 text-center">
+          🚀 This is alpha launch - we are onboarding projects. If you want your repo and issues listed, contact us at{' '}
+          <a 
+            href="mailto:support@gitwork.io" 
+            className="text-purple-400 hover:text-purple-300 transition-colors duration-200"
+          >
+            support@gitwork.io
+          </a>
+        </p>
+      </div>
+
     </div>
   );
 };
