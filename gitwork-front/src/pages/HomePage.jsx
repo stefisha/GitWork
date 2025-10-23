@@ -21,9 +21,10 @@ const HomePage = () => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 pb-20 sm:pb-32 relative overflow-x-hidden"
+      className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 pb-24 sm:pb-32 relative overflow-x-hidden"
       style={{
-        background: '#0d1117'
+        background: '#0d1117',
+        borderBottom: 'none'
       }}
     >
       {/* Main Content */}

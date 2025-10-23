@@ -2,7 +2,7 @@ import React from 'react';
 
 const PrivacyPage = () => {
   return (
-    <div className="min-h-screen p-3 sm:p-6 md:p-8 -mt-12 sm:-mt-16" style={{ background: '#0d1117' }}>
+    <div className="min-h-screen p-3 sm:p-6 md:p-8 pt-6 sm:pt-8" style={{ background: '#0d1117' }}>
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8 md:mb-12">
