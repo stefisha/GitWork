@@ -21,7 +21,7 @@ const HomePage = () => {
 
   return (
     <div 
-      className="h-screen flex flex-col items-center justify-center p-8 relative"
+      className="h-screen flex flex-col items-center justify-center p-8 relative overflow-hidden"
       style={{
         background: '#0d1117'
       }}
