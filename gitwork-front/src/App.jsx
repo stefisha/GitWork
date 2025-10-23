@@ -6,6 +6,7 @@ import AboutPage from './pages/AboutPage';
 import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
 import ContactPage from './pages/ContactPage';
+import PrivacyPage from './pages/PrivacyPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="profile" element={<ProfilePage />} />
           <Route path="search" element={<SearchPage />} />
           <Route path="contact" element={<ContactPage />} />
+          <Route path="privacy" element={<PrivacyPage />} />
         </Route>
       </Routes>
     </Router>
