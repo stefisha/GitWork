@@ -27,7 +27,7 @@ const ContactPage = () => {
     try {
       // Try EmailJS first
       try {
-        emailjs.init('8pr5zlixwWjlJhXzE');
+        emailjs.init('f6bns0GdOjJmKdJje');
         
         const result = await emailjs.send(
           'service_fscd3dl',
