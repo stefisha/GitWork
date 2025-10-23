@@ -43,7 +43,7 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row h-screen" style={{ background: '#0d1117' }}>
+    <div className="flex flex-col sm:flex-row h-screen" style={{ background: '#0d1117', border: 'none', outline: 'none' }}>
       {/* Sidebar - Top on mobile, left on desktop */}
       <div className="sm:hidden">
         <Sidebar />
@@ -53,7 +53,7 @@ const MainLayout = () => {
       </div>
       
       {/* Main Content Area */}
-      <div className="flex-1 overflow-auto flex flex-col">
+      <div className="flex-1 overflow-auto flex flex-col" style={{ border: 'none', outline: 'none' }}>
         {/* Header with Sign In/Out - Hide Sign In on mobile, always show Sign Out when logged in */}
         <header className="flex justify-end items-center p-2 sm:p-3 md:p-4" style={{ background: '#0d1117' }}>
           {!isLoading && (
