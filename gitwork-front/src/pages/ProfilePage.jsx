@@ -41,14 +41,14 @@ const ProfilePage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0d1117' }}>
+      <div className="min-h-screen flex items-center justify-center -mt-16" style={{ background: '#0d1117' }}>
         <div className="text-white text-xl">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-8" style={{ background: '#0d1117' }}>
+    <div className="min-h-screen p-8 -mt-16" style={{ background: '#0d1117' }}>
       <div className="max-w-6xl mx-auto">
          {!isLoggedIn ? (
            // Login Prompt
