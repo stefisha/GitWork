@@ -18,6 +18,7 @@ import claimRoutes from './routes/claim.js';
 import apiClaimRoutes from './routes/api-claim.js';
 import apiBountiesRoutes from './routes/api-bounties.js';
 import apiUserRoutes from './routes/api-user.js';
+import apiContactRoutes from './routes/api-contact.js';
 import { runMigrations } from './db/migrate.js';
 import depositMonitor from './services/deposit-monitor.js';
 
@@ -62,6 +63,7 @@ app.use('/claim', claimRoutes);
 app.use('/api/claim', apiClaimRoutes);
 app.use('/api/bounties', apiBountiesRoutes);
 app.use('/api/user', apiUserRoutes);
+app.use('/api/contact', apiContactRoutes);
 
 // Serve frontend static files in production
 if (process.env.NODE_ENV === 'production') {
