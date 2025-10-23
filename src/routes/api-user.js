@@ -30,13 +30,12 @@ router.get('/profile', (req, res) => {
         b.github_repo_owner as owner,
         b.github_repo_name as repo,
         b.github_issue_number as issue_number,
-        b.github_issue_title as issue_title,
         b.claimed_at,
-        b.payout_transaction as transaction,
+        b.transaction_signature as transaction,
         (b.github_repo_owner || '/' || b.github_repo_name) as full_repo_name
       FROM bounties b
       WHERE 
-        b.claimed_by_github_username = ?
+        b.contributor_github_username = ?
         AND b.status = 'claimed'
       ORDER BY b.claimed_at DESC
     `).all(githubUsername);
@@ -57,7 +56,7 @@ router.get('/profile', (req, res) => {
       currency: b.currency.toUpperCase(),
       repo: b.full_repo_name,
       issueNumber: b.issue_number,
-      issueTitle: b.issue_title,
+      issueTitle: `Issue #${b.issue_number}`,
       claimedAt: b.claimed_at,
       githubUrl: `https://github.com/${b.owner}/${b.repo}/issues/${b.issue_number}`,
       transactionUrl: b.transaction ? `https://solscan.io/tx/${b.transaction}` : null
