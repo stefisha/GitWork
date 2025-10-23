@@ -54,10 +54,10 @@ const MainLayout = () => {
       
       {/* Main Content Area */}
       <div className="flex-1 overflow-auto flex flex-col">
-        {/* Header with Sign In/Out - Always visible */}
+        {/* Header with Sign In/Out - Hide Sign In on mobile, always show Sign Out when logged in */}
         <header className="flex justify-end items-center p-2 sm:p-3 md:p-4 border-b sm:border-b-0" style={{ background: '#0d1117', borderColor: '#30363d' }}>
           {!isLoading && (
-            <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+            <>
               {isAuthenticated ? (
                 <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
                   {user?.avatar && (
@@ -79,13 +79,13 @@ const MainLayout = () => {
               ) : (
                 <button
                   onClick={handleSignIn}
-                  className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-white text-xs sm:text-sm font-medium transition-colors duration-200 hover:bg-purple-700"
+                  className="hidden sm:inline-block px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-white text-xs sm:text-sm font-medium transition-colors duration-200 hover:bg-purple-700"
                   style={{ background: '#8B5CF6' }}
                 >
                   Sign In
                 </button>
               )}
-            </div>
+            </>
           )}
         </header>
         
