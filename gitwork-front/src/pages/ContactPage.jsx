@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { api } from '../services/api';
+import emailjs from '@emailjs/browser';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -25,13 +25,17 @@ const ContactPage = () => {
     setSubmitStatus(null);
 
     try {
-      const response = await api.sendContactForm(formData);
-      if (response.success) {
-        setSubmitStatus('success');
-        setFormData({ name: '', email: '', subject: '', message: '' });
-      } else {
-        setSubmitStatus('error');
-      }
+      // For now, we'll use a simple mailto link as fallback
+      // This will open the user's email client with pre-filled content
+      const mailtoLink = `mailto:support@gitwork.io?subject=${encodeURIComponent(`[GitWork Contact] ${formData.subject}`)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\nSubject: ${formData.subject}\n\nMessage:\n${formData.message}`)}`;
+      
+      // Open email client
+      window.location.href = mailtoLink;
+      
+      // Show success message
+      setSubmitStatus('success');
+      setFormData({ name: '', email: '', subject: '', message: '' });
+      
     } catch (error) {
       console.error('Contact form error:', error);
       setSubmitStatus('error');
@@ -90,7 +94,7 @@ const ContactPage = () => {
           {submitStatus === 'success' && (
             <div className="mb-6 p-4 rounded-lg" style={{ background: '#1a472a', border: '1px solid #238636' }}>
               <p className="text-green-400 text-sm sm:text-base">
-                ✅ Thank you! Your message has been sent successfully. We'll get back to you soon.
+                ✅ Your email client should open with a pre-filled message. Please send it to complete your contact request.
               </p>
             </div>
           )}
