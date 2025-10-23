@@ -25,40 +25,28 @@ const ContactPage = () => {
     setSubmitStatus(null);
 
     try {
-      // Try EmailJS first
-      try {
-        emailjs.init('f6bns0GdOjJmKdJje');
-        
-        const result = await emailjs.send(
-          'service_fscd3dl',
-          'template_default',
-          {
-            from_name: formData.name,
-            from_email: formData.email,
-            subject: formData.subject,
-            message: formData.message,
-            to_email: 'support@gitwork.io'
-          }
-        );
-
-        if (result.status === 200) {
-          setSubmitStatus('success');
-          setFormData({ name: '', email: '', subject: '', message: '' });
-          return;
+      // Initialize EmailJS
+      emailjs.init('f6bns0GdOjJmKdJje');
+      
+      // Send email using EmailJS - try template_1 which is the default
+      const result = await emailjs.send(
+        'service_fscd3dl',
+        'template_1', // This is usually the default template ID
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          to_email: 'support@gitwork.io'
         }
-      } catch (emailjsError) {
-        console.log('EmailJS failed, trying fallback:', emailjsError);
-      }
+      );
 
-      // Fallback: Use mailto link
-      const mailtoLink = `mailto:support@gitwork.io?subject=${encodeURIComponent(`[GitWork Contact] ${formData.subject}`)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\nSubject: ${formData.subject}\n\nMessage:\n${formData.message}`)}`;
-      
-      // Open email client
-      window.location.href = mailtoLink;
-      
-      // Show success message
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
+      if (result.status === 200) {
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+      }
       
     } catch (error) {
       console.error('Contact form error:', error);
@@ -118,7 +106,7 @@ const ContactPage = () => {
           {submitStatus === 'success' && (
             <div className="mb-6 p-4 rounded-lg" style={{ background: '#1a472a', border: '1px solid #238636' }}>
               <p className="text-green-400 text-sm sm:text-base">
-                ✅ Your email client should open with a pre-filled message. Please send it to complete your contact request.
+                ✅ Thank you! Your message has been sent successfully. We'll get back to you soon.
               </p>
             </div>
           )}
