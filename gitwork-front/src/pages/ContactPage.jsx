@@ -28,18 +28,33 @@ const ContactPage = () => {
       // Initialize EmailJS
       emailjs.init('f6bns0GdOjJmKdJje');
       
-      // Send email using EmailJS - try template_1 which is the default
-      const result = await emailjs.send(
-        'service_fscd3dl',
-        'template_1', // This is usually the default template ID
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          to_email: 'support@gitwork.io'
+      // Send email using EmailJS - try different template IDs
+      let result;
+      const templateIds = ['template_1', 'template_default', 'template_contact'];
+      
+      for (const templateId of templateIds) {
+        try {
+          console.log(`Trying template: ${templateId}`);
+          result = await emailjs.send(
+            'service_fscd3dl',
+            templateId,
+            {
+              from_name: formData.name,
+              from_email: formData.email,
+              subject: formData.subject,
+              message: formData.message,
+              to_email: 'support@gitwork.io'
+            }
+          );
+          console.log(`Template ${templateId} succeeded:`, result);
+          break;
+        } catch (templateError) {
+          console.log(`Template ${templateId} failed:`, templateError);
+          if (templateId === templateIds[templateIds.length - 1]) {
+            throw templateError; // Re-throw the last error
+          }
         }
-      );
+      }
 
       if (result.status === 200) {
         setSubmitStatus('success');
@@ -50,6 +65,8 @@ const ContactPage = () => {
       
     } catch (error) {
       console.error('Contact form error:', error);
+      console.error('Error details:', error.message);
+      console.error('Error code:', error.code);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
