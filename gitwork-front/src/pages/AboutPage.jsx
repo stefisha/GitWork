@@ -19,7 +19,7 @@ const AboutPage = () => {
           </p>
           <div className="flex justify-center gap-4 mb-12">
             <a 
-              href="https://github.com/apps/octavian-gitwork" 
+              href="https://github.com/apps/gitwork-io" 
               target="_blank" 
               rel="noopener noreferrer"
               className="px-8 py-3 rounded-lg font-semibold text-white transition-colors duration-200"
@@ -359,7 +359,7 @@ const AboutPage = () => {
           <p className="text-xl text-gray-400 mb-8">Join the future of open source development. Install GitWork in seconds.</p>
           <div className="flex justify-center gap-4">
             <a 
-              href="https://github.com/apps/octavian-gitwork" 
+              href="https://github.com/apps/gitwork-io" 
               target="_blank" 
               rel="noopener noreferrer"
               className="px-8 py-3 rounded-lg font-semibold text-white transition-colors duration-200"
