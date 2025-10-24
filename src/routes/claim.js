@@ -520,6 +520,10 @@ router.get('/:bountyId/success', (req, res) => {
             </div>
           ` : ''}
           
+          <a href="https://gitwork.io/profile" class="btn" style="background: #8B5CF6; margin-right: 10px;">
+            View Your Profile
+          </a>
+          
           <a href="https://github.com/${bounty.github_repo_owner}/${bounty.github_repo_name}/issues/${bounty.github_issue_number}" class="btn">
             View Issue on GitHub
           </a>
