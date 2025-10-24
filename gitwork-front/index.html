@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>GitWork - Make Money on GitHub</title>
+    <meta name="description" content="Turn GitHub issues into instant bounties. Pay developers automatically when their contributions are merged." />
+    <meta name="theme-color" content="#0d1117" />
+    <style>
+      /* Remove mobile browser progress bars and decorations */
+      html, body {
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+        background-color: #0d1117;
+      }
+      body {
+        position: fixed;
+        overflow: hidden;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height for mobile */
+        margin: 0;
+        padding: 0;
+      }
+      #root {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        background-color: #0d1117;
+      }
+      /* Hide mobile browser UI elements */
+      #root::after {
+        content: '';
+        display: block;
+        height: env(safe-area-inset-bottom);
+        background-color: #0d1117;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
