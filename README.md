@@ -1,4 +1,4 @@
-# GitWork 🐙
+# GitWork
 
 [![Live](https://img.shields.io/badge/Live-gitwork.io-8B5CF6?style=for-the-badge)](https://gitwork.io)
 [![Solana](https://img.shields.io/badge/Solana-Mainnet-14F195?style=for-the-badge&logo=solana&logoColor=white)](https://solana.com)
