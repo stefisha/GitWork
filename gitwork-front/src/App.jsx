@@ -7,6 +7,7 @@ import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
 import ContactPage from './pages/ContactPage';
 import PrivacyPage from './pages/PrivacyPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
           <Route path="contact" element={<ContactPage />} />
           <Route path="privacy" element={<PrivacyPage />} />
         </Route>
+        {/* 404 catch-all route - must be last */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );
