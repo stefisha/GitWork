@@ -218,8 +218,16 @@ const PrivacyPage = () => {
           </section>
         </div>
 
-        {/* Back to Home */}
+        {/* Footer Links */}
         <div className="text-center mt-6 sm:mt-8 mb-4">
+          <div className="mb-4">
+            <a 
+              href="/terms"
+              className="text-sm sm:text-base text-gray-400 hover:text-purple-400 transition-colors"
+            >
+              View Terms of Service
+            </a>
+          </div>
           <a 
             href="/"
             className="inline-block px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold text-sm sm:text-base text-white transition-colors duration-200 hover:bg-purple-700"
