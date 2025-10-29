@@ -20,7 +20,7 @@ const HomePage = () => {
   };
 
   return (
-    <div 
+    <main 
       className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 pb-24 sm:pb-32 relative overflow-x-hidden"
       style={{
         background: '#0d1117',
@@ -28,12 +28,12 @@ const HomePage = () => {
       }}
     >
       {/* Main Content */}
-      <div className="text-center space-y-4 sm:space-y-8 max-w-4xl w-full -mt-24 sm:-mt-56">
+      <section className="text-center space-y-4 sm:space-y-8 max-w-4xl w-full -mt-24 sm:-mt-56">
         {/* Logo and Branding */}
-        <div className="space-y-0">
+        <header className="space-y-0">
           <img 
             src={octopusLogo} 
-            alt="GitWork Logo" 
+            alt="GitWork - GitHub Bounties Platform Logo" 
             className="w-12 h-12 sm:w-20 sm:h-20 mx-auto"
           />
           <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold text-white">
@@ -42,10 +42,10 @@ const HomePage = () => {
           <p className="text-xl sm:text-3xl md:text-5xl font-medium text-white">
             make money on github
           </p>
-        </div>
+        </header>
 
         {/* Search Bar */}
-        <div className="flex justify-center px-4">
+        <div className="flex justify-center px-4" role="search" aria-label="Search GitHub bounties">
           <SearchBar 
             onSearch={handleSearch}
             className="w-full max-w-2xl"
@@ -116,10 +116,10 @@ const HomePage = () => {
             <p>No projects found. Try a different search term.</p>
           </div>
         )}
-      </div>
+      </section>
 
       {/* Alpha Launch Footer */}
-      <div className="fixed bottom-4 sm:bottom-8 left-0 right-0 px-4 z-10">
+      <footer className="fixed bottom-4 sm:bottom-8 left-0 right-0 px-4 z-10">
         <p className="text-xs sm:text-sm md:text-base text-gray-400 text-center leading-relaxed">
           🚀 This is alpha launch - we are onboarding projects. If you want your repo and issues listed, contact us at{' '}
           <a 
@@ -129,9 +129,9 @@ const HomePage = () => {
             support@gitwork.io
           </a>
         </p>
-      </div>
+      </footer>
 
-    </div>
+    </main>
   );
 };
 
