@@ -27,7 +27,7 @@ router.get('/search', (req, res) => {
         b.claimed_at,
         (b.github_repo_owner || '/' || b.github_repo_name) as full_repo_name
       FROM bounties b
-      WHERE status IN ('deposit_confirmed', 'ready_to_claim')
+      WHERE status = 'deposit_confirmed'
     `;
     
     const params = [];
@@ -89,7 +89,7 @@ router.get('/stats', (req, res) => {
       SELECT 
         COUNT(*) as total_bounties,
         SUM(CASE WHEN status = 'claimed' THEN 1 ELSE 0 END) as claimed_count,
-        SUM(CASE WHEN status IN ('deposit_confirmed', 'ready_to_claim') THEN 1 ELSE 0 END) as active_count,
+        SUM(CASE WHEN status = 'deposit_confirmed' THEN 1 ELSE 0 END) as active_count,
         SUM(CASE WHEN currency = 'USDC' AND status = 'claimed' THEN bounty_amount ELSE 0 END) as total_usdc_paid,
         SUM(CASE WHEN currency = 'SOL' AND status = 'claimed' THEN bounty_amount ELSE 0 END) as total_sol_paid
       FROM bounties
