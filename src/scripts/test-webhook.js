@@ -53,7 +53,7 @@ async function testIssueLabeledWithBounty() {
       title: 'Add dark mode support',
       body: 'We need dark mode for better UX',
       labels: [
-        { name: 'Octavian:USDC:50' },
+        { name: 'gitwork:USDC:50' },
         { name: 'enhancement' }
       ],
       state: 'open',
@@ -62,7 +62,7 @@ async function testIssueLabeledWithBounty() {
       }
     },
     label: {
-      name: 'Octavian:USDC:50'
+      name: 'gitwork:USDC:50'
     },
     repository: {
       id: 123456,
