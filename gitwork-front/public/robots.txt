@@ -1,0 +1,10 @@
+# Allow all search engines to crawl all content
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://gitwork.io/sitemap.xml
+
+# Crawl delay (optional - helps prevent overloading server)
+Crawl-delay: 1
+
