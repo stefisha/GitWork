@@ -4,7 +4,6 @@ import MainLayout from './components/MainLayout';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import ProfilePage from './pages/ProfilePage';
-import SearchPage from './pages/SearchPage';
 import ContactPage from './pages/ContactPage';
 import PrivacyPage from './pages/PrivacyPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -17,7 +16,6 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="profile" element={<ProfilePage />} />
-          <Route path="search" element={<SearchPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="privacy" element={<PrivacyPage />} />
         </Route>

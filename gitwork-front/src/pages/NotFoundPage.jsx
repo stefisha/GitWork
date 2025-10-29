@@ -30,25 +30,16 @@ export default function NotFoundPage() {
           The page you're looking for doesn't exist or has been moved.
         </p>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        {/* Action Button */}
+        <div className="flex justify-center">
           <Link 
             to="/" 
-            className="px-6 py-3 text-white rounded-lg transition-colors font-medium w-full sm:w-auto"
+            className="px-8 py-3 text-white rounded-lg transition-colors font-medium"
             style={{ background: '#8B5CF6' }}
             onMouseEnter={(e) => e.target.style.background = '#7C3AED'}
             onMouseLeave={(e) => e.target.style.background = '#8B5CF6'}
           >
             Go Home
-          </Link>
-          <Link 
-            to="/search" 
-            className="px-6 py-3 text-white rounded-lg transition-colors font-medium w-full sm:w-auto"
-            style={{ background: '#161b22', border: '1px solid #30363d' }}
-            onMouseEnter={(e) => e.target.style.background = '#1f2937'}
-            onMouseLeave={(e) => e.target.style.background = '#161b22'}
-          >
-            Search Bounties
           </Link>
         </div>
 
