@@ -55,8 +55,9 @@ webhooks.on('issues.labeled', async ({ payload }) => {
   
   console.log(`🏷️  Issue #${issue.number} labeled with: ${label.name}`);
   
-  // Check if this is a bounty label (Octavian:USDC:50 or octavian:usdc:50)
-  if (label.name.toLowerCase().startsWith('octavian:')) {
+  // Check if this is a bounty label (gitwork:USDC:50 or octavian:USDC:50 - legacy)
+  const labelLower = label.name.toLowerCase();
+  if (labelLower.startsWith('gitwork:') || labelLower.startsWith('octavian:')) {
     console.log(`💰 Bounty label detected on issue #${issue.number}`);
     
     try {
@@ -85,7 +86,8 @@ webhooks.on('issues.labeled', async ({ payload }) => {
 webhooks.on('issues.unlabeled', async ({ payload }) => {
   const { issue, label, repository, installation } = payload;
   
-  if (label.name.toLowerCase().startsWith('octavian:')) {
+  const labelLower = label.name.toLowerCase();
+  if (labelLower.startsWith('gitwork:') || labelLower.startsWith('octavian:')) {
     console.log(`🗑️  Bounty label removed from issue #${issue.number}: ${label.name}`);
     
     try {
