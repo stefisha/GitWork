@@ -26,10 +26,10 @@ const PrivacyPage = () => {
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3">1. Introduction</h2>
             <div className="text-gray-300 text-xs sm:text-sm md:text-base space-y-2 sm:space-y-3">
               <p>
-                Welcome to GitWork.io ("we," "our," "us"). We operate a platform and GitHub app that connects developers to open-source bounties and contribution opportunities.
+                Welcome to GitWork ("we," "our," "us"). We operate a platform and GitHub app that connects developers to open-source bounties and contribution opportunities.
               </p>
               <p>
-                This Privacy Policy explains how we collect, use, and protect your information when you use our website, app, or related services. By using GitWork.io, you agree to this Privacy Policy.
+                This Privacy Policy explains how we collect, use, and protect your information when you use our website, app, or related services. By using GitWork, you agree to this Privacy Policy.
               </p>
             </div>
           </section>
@@ -84,11 +84,11 @@ const PrivacyPage = () => {
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3">3. How We Use Your Information</h2>
             <p className="text-gray-300 text-sm sm:text-base mb-2">We use your data to:</p>
             <ul className="list-disc list-inside text-gray-300 text-sm sm:text-base space-y-1 ml-4">
-              <li>Operate and improve the GitWork platform</li>
+              <li>Operate and improve GitWork</li>
               <li>Authenticate your GitHub connection</li>
               <li>Display relevant bounties and contribution opportunities</li>
               <li>Send optional email updates or community news</li>
-              <li>Process payments for premium features</li>
+              <li>Process bounty payments</li>
               <li>Ensure security, compliance, and prevent abuse</li>
             </ul>
             <p className="text-gray-300 text-sm sm:text-base mt-3 font-semibold">
@@ -99,7 +99,7 @@ const PrivacyPage = () => {
           {/* Section 4 */}
           <section>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3">4. Cookies and Tracking</h2>
-            <p className="text-gray-300 text-sm sm:text-base mb-2">GitWork.io uses cookies and similar technologies for:</p>
+            <p className="text-gray-300 text-sm sm:text-base mb-2">GitWork uses cookies and similar technologies for:</p>
             <ul className="list-disc list-inside text-gray-300 text-sm sm:text-base space-y-1 ml-4">
               <li>Session management</li>
               <li>Security and authentication</li>
@@ -173,7 +173,7 @@ const PrivacyPage = () => {
           <section>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3">11. Children's Privacy</h2>
             <p className="text-gray-300 text-xs sm:text-sm md:text-base">
-              GitWork.io is not directed toward children under 13, and we do not knowingly collect data from them.
+              GitWork is not directed toward children under 13, and we do not knowingly collect data from them.
             </p>
           </section>
 
@@ -211,7 +211,7 @@ const PrivacyPage = () => {
           <section>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3">15. Contact Us</h2>
             <div className="text-gray-300 text-sm sm:text-base space-y-2">
-              <p className="font-semibold text-white">GitWork.io Team</p>
+              <p className="font-semibold text-white">GitWork Team</p>
               <p>📧 <a href="mailto:support@gitwork.io" className="text-purple-400 hover:text-purple-300">support@gitwork.io</a></p>
               <p>🌐 <a href="https://gitwork.io" className="text-purple-400 hover:text-purple-300">https://gitwork.io</a></p>
             </div>

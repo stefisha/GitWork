@@ -389,6 +389,13 @@ const AboutPage = () => {
             >
               Privacy Policy
             </a>
+            {' '}•{' '}
+            <a 
+              href="/terms" 
+              className="text-purple-400 hover:text-purple-300 transition-colors duration-200"
+            >
+              Terms of Service
+            </a>
           </p>
         </div>
       </footer>
