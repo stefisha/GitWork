@@ -382,7 +382,7 @@ const AboutPage = () => {
       <footer className="py-8 px-8 border-t" style={{ borderColor: '#30363d' }}>
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-gray-400 text-sm">
-            © 2025 GitWork.io • All rights reserved •{' '}
+            © 2025 GitWork • All rights reserved •{' '}
             <a 
               href="/privacy" 
               className="text-purple-400 hover:text-purple-300 transition-colors duration-200"
