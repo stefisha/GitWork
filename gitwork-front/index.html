@@ -2,7 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    
+    <!-- Favicons for all platforms -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png" />
+    <link rel="shortcut icon" href="/favicon.png" />
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     
     <!-- Primary Meta Tags -->
@@ -45,14 +51,53 @@
       gtag('config', 'G-3QK1P7V8KE');
     </script>
     
-    <!-- Structured Data / Schema.org -->
+    <!-- Structured Data / Schema.org - WebSite with SearchAction -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "GitWork",
+      "url": "https://gitwork.io",
+      "description": "Turn GitHub issues into instant bounties paid in USDC on Solana",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://gitwork.io/?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <!-- Structured Data / Schema.org - Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "GitWork",
+      "url": "https://gitwork.io",
+      "logo": "https://gitwork.io/favicon.png",
+      "sameAs": [
+        "https://github.com/stefisha/GitWork",
+        "https://github.com/apps/gitwork-io"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "support@gitwork.io",
+        "contactType": "Customer Support",
+        "availableLanguage": "English"
+      }
+    }
+    </script>
+    
+    <!-- Structured Data / Schema.org - WebApplication -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "GitWork",
       "url": "https://gitwork.io",
-      "logo": "https://gitwork.io/logo_w.png",
       "description": "Turn GitHub issues into instant bounties paid in USDC on Solana. Get paid automatically when your contributions are merged.",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Web",
@@ -67,17 +112,7 @@
         "Open source contributor rewards",
         "Smart contract escrow",
         "GitHub app integration"
-      ],
-      "creator": {
-        "@type": "Organization",
-        "name": "GitWork",
-        "url": "https://gitwork.io",
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "email": "support@gitwork.io",
-          "contactType": "Customer Support"
-        }
-      }
+      ]
     }
     </script>
     <style>
