@@ -68,13 +68,30 @@ app.use('/api/contact', apiContactRoutes);
 // Serve frontend static files in production
 if (process.env.NODE_ENV === 'production') {
   const frontendPath = join(__dirname, '..', 'gitwork-front', 'dist');
-  app.use(express.static(frontendPath));
+  
+  // Serve static files with proper content types
+  app.use(express.static(frontendPath, {
+    setHeaders: (res, path) => {
+      // Set proper content type for XML files
+      if (path.endsWith('.xml')) {
+        res.setHeader('Content-Type', 'application/xml');
+      }
+      // Set proper content type for robots.txt
+      if (path.endsWith('robots.txt')) {
+        res.setHeader('Content-Type', 'text/plain');
+      }
+    }
+  }));
   
   // Frontend routes - must be AFTER all API routes
   app.get('*', (req, res) => {
     // Skip API routes
     if (req.path.startsWith('/api') || req.path.startsWith('/auth') || req.path.startsWith('/claim')) {
       return res.status(404).json({ error: 'Not found' });
+    }
+    // Don't serve index.html for static files like .xml, .txt, etc.
+    if (req.path.match(/\.(xml|txt|json|ico|png|jpg|jpeg|gif|svg|css|js)$/)) {
+      return res.status(404).send('Not found');
     }
     res.sendFile(join(frontendPath, 'index.html'));
   });
