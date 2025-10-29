@@ -357,8 +357,8 @@ ${bountyInfo.labels.map(label => `- \`${label.labelName}\` (${label.amount} ${la
 2. I'll automatically create the bounty when only one label remains
 
 **Supported formats:**
-- \`Octavian:USDC:50\` - 50 USDC bounty
-- \`Octavian:SOL:0.1\` - 0.1 SOL bounty
+- \`gitwork:USDC:50\` - 50 USDC bounty
+- \`gitwork:SOL:0.1\` - 0.1 SOL bounty
 
 ---
 *Powered by [GitWork](https://gitwork.io) - Making open source rewarding* 💎`;
@@ -396,11 +396,11 @@ I found an unsupported currency in your bounty label: **${bountyInfo.currency}**
 
 **To fix this:**
 1. Remove the current label: \`${bountyInfo.labelName}\`
-2. Add a supported label: \`Octavian:USDC:${bountyInfo.amount}\` or \`Octavian:SOL:${bountyInfo.amount}\`
+2. Add a supported label: \`gitwork:USDC:${bountyInfo.amount}\` or \`gitwork:SOL:${bountyInfo.amount}\`
 
 **Example:**
-- \`Octavian:USDC:50\` - 50 USDC bounty
-- \`Octavian:SOL:0.1\` - 0.1 SOL bounty
+- \`gitwork:USDC:50\` - 50 USDC bounty
+- \`gitwork:SOL:0.1\` - 0.1 SOL bounty
 
 ---
 *Powered by [GitWork](https://gitwork.io) - Making open source rewarding* 💎`;

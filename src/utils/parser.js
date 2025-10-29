@@ -1,20 +1,23 @@
 /**
  * Parse a bounty label to extract currency and amount
- * Expected format: Octavian:USDC:50
+ * Supported formats: 
+ * - gitwork:USDC:50 (preferred)
+ * - octavian:USDC:50 (legacy, still supported)
  * 
  * @param {string} label - The label to parse
  * @returns {Object|null} - { currency, amount } or null if invalid
  */
 export function parseBountyLabel(label) {
-  const pattern = /^Octavian:([A-Z]+):(\d+(?:\.\d+)?)$/i;
+  // Support both "gitwork:" and "octavian:" (legacy)
+  const pattern = /^(gitwork|octavian):([A-Z]+):(\d+(?:\.\d+)?)$/i;
   const match = label.match(pattern);
   
   if (!match) {
     return null;
   }
   
-  const currency = match[1].toUpperCase();
-  const amount = parseFloat(match[2]);
+  const currency = match[2].toUpperCase();
+  const amount = parseFloat(match[3]);
   
   if (isNaN(amount) || amount <= 0) {
     return null;
