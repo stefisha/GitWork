@@ -4,7 +4,7 @@
 [![Solana](https://img.shields.io/badge/Solana-Mainnet-14F195?style=for-the-badge&logo=solana&logoColor=white)](https://solana.com)
 [![GitHub App](https://img.shields.io/badge/GitHub-App-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/apps/gitwork-io)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Beta-orange?style=for-the-badge)](https://gitwork.io)
+[![Status](https://img.shields.io/badge/Status-Alpha-orange?style=for-the-badge)](https://gitwork.io)
 
 **Turn GitHub issues into instant bounties. Pay developers automatically when their contributions are merged.**
 
