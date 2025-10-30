@@ -3,7 +3,7 @@ import USDC from '../assets/usd-coin-usdc-logo.svg';
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen" style={{ background: '#0d1117' }}>
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="py-12 px-8">
         <div className="max-w-6xl mx-auto text-center">
