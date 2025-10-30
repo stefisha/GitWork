@@ -55,7 +55,7 @@ const MainLayout = () => {
       {/* Main Content Area */}
       <div className="flex-1 overflow-auto flex flex-col" style={{ border: 'none', outline: 'none' }}>
         {/* Header with Sign In/Out - Hide Sign In on mobile, always show Sign Out when logged in */}
-        <header className="flex justify-end items-center p-2 sm:p-3 md:p-4" style={{ background: '#0d1117' }}>
+        <header className="flex justify-end items-center p-2 sm:p-3 md:p-4" style={{ background: '#161b22' }}>
           {!isLoading && (
             <>
               {isAuthenticated ? (
