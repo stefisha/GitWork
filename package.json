@@ -24,6 +24,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@arcium-hq/client": "^0.3.0",
+    "@arcium-hq/reader": "^0.3.0",
+    "@coral-xyz/anchor": "^0.29.0",
     "@octokit/auth-app": "^6.0.1",
     "@octokit/rest": "^20.0.2",
     "@octokit/webhooks": "^12.0.10",
