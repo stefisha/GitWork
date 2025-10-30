@@ -78,6 +78,7 @@ Simply remove the bounty label from the issue. If funds were already deposited, 
 
 ## ✨ Features
 
+- ⚡ **Lightning Fast** - Powered by MagicBlock Ephemeral Rollups for instant claims
 - ✅ **Instant Payments** - Receive funds in seconds via Solana blockchain
 - ✅ **Automatic Escrow** - Funds held securely until work is completed
 - ✅ **Zero Fees** - No platform fees (we cover transaction costs)
@@ -107,11 +108,21 @@ Simply remove the bounty label from the issue. If funds were already deposited, 
 1. Repo Owner adds label     → gitwork:usdc:50
 2. GitWork creates escrow     → Solana wallet generated
 3. Owner funds escrow         → Sends 50 USDC to wallet
-4. Bounty becomes active      → Listed on gitwork.io
+4. Bounty becomes active      → Listed on gitwork.io + Ephemeral session created ⚡
 5. Contributor submits PR     → References issue #123
 6. Owner merges PR            → Closes the issue
-7. Contributor claims         → Receives 50 USDC instantly
+7. Contributor claims         → Receives 50 USDC instantly via MagicBlock ⚡
 ```
+
+### 🚀 MagicBlock Ephemeral Rollups
+
+GitWork uses **MagicBlock Ephemeral Rollups** to provide:
+- **⚡ Sub-second finality**: Claims are instant
+- **💰 Lower costs**: Minimal transaction fees
+- **🔄 Automatic settlement**: Periodic commits to Solana base layer
+- **🛡️ Secure**: Same security as Solana, faster execution
+
+When a bounty becomes claimable, an ephemeral session is automatically created, enabling contributors to receive their payments almost instantly. See [MAGICBLOCK_INTEGRATION.md](MAGICBLOCK_INTEGRATION.md) for technical details.
 
 ---
 
