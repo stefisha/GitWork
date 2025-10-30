@@ -1,6 +1,12 @@
 import { PrivyClient } from '@privy-io/node';
 import { Keypair } from '@solana/web3.js';
 import bs58 from 'bs58';
+import { 
+  getMagicBlockConnection, 
+  getSolanaConnection,
+  executeOnEphemeralRollup,
+  getSmartConnection 
+} from './magicblock.js';
 
 const PRIVY_APP_ID = process.env.PRIVY_APP_ID || process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 const PRIVY_APP_SECRET = process.env.PRIVY_APP_SECRET;
@@ -114,15 +120,20 @@ export async function createBountyWallet(bountyId) {
 
 /**
  * Transfer funds from escrow wallet to contributor wallet using custom sponsorship
+ * Uses MagicBlock ephemeral rollup for instant transfers
  * 
  * @param {string} escrowWalletAddress - Escrow wallet address (Privy-managed)
  * @param {string} recipientAddress - Recipient's Solana wallet address
  * @param {number} amount - Amount to transfer
  * @param {string} currency - Currency type (USDC or SOL)
+ * @param {string} sessionId - Optional ephemeral session ID for fast execution
  * @returns {Promise<string>} - Transaction signature
  */
-export async function transferBountyFunds(escrowWalletAddress, recipientAddress, amount, currency = 'USDC') {
+export async function transferBountyFunds(escrowWalletAddress, recipientAddress, amount, currency = 'USDC', sessionId = null) {
   console.log(`💸 Transferring ${amount} ${currency} from ${escrowWalletAddress} to ${recipientAddress}`);
+  if (sessionId) {
+    console.log(`⚡ Using ephemeral session: ${sessionId}`);
+  }
 
   const client = getPrivyClient();
   const feePayer = getFeePayerWallet();
@@ -157,7 +168,8 @@ export async function transferBountyFunds(escrowWalletAddress, recipientAddress,
       SystemProgram
     } = await import('@solana/web3.js');
 
-    const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com');
+    // Use MagicBlock connection if available, fallback to base layer
+    const connection = await getSmartConnection(true);
 
     // Check fee payer SOL balance
     const feePayerBalance = await connection.getBalance(feePayer.publicKey);
@@ -258,9 +270,22 @@ export async function transferBountyFunds(escrowWalletAddress, recipientAddress,
     // Add fee payer signature
     transaction.sign([feePayer]);
 
-    // Send transaction
-    const signature = await connection.sendTransaction(transaction);
+    // Send transaction using MagicBlock if session provided, otherwise base layer
+    let signature;
+    if (sessionId) {
+      console.log('⚡ Executing on MagicBlock ephemeral rollup for instant confirmation...');
+      signature = await executeOnEphemeralRollup(sessionId, transaction);
+    } else {
+      console.log('🌐 Executing on base layer...');
+      signature = await connection.sendTransaction(transaction, {
+        skipPreflight: false,
+        preflightCommitment: 'confirmed',
+      });
+      await connection.confirmTransaction(signature, 'confirmed');
+    }
+    
     console.log(`✅ Sponsored ${currency} transfer successful: ${signature}`);
+    console.log(`   Explorer: https://explorer.solana.com/tx/${signature}`);
     
     return signature;
 
