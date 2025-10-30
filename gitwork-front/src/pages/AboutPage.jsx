@@ -4,8 +4,8 @@ import USDC from '../assets/usd-coin-usdc-logo.svg';
 const AboutPage = () => {
   return (
     <div className="min-h-screen">
-      {/* Hero Section - GRAY */}
-      <section className="py-12 px-8" style={{ background: '#161b22' }}>
+      {/* Hero Section - BLACK */}
+      <section className="py-12 px-8" style={{ background: '#0d1117' }}>
         <div className="max-w-6xl mx-auto text-center">
           <div className="inline-block px-4 py-2 rounded-full text-sm font-medium mb-6" style={{ background: '#161b22', border: '1px solid #30363d', color: '#8B5CF6' }}>
             🚀 Live on Solana Mainnet
@@ -54,8 +54,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Turn Issues Into Opportunities - BLACK */}
-      <section className="py-20 px-8" style={{ background: '#0d1117' }}>
+      {/* Turn Issues Into Opportunities - GRAY */}
+      <section className="py-20 px-8" style={{ background: '#161b22' }}>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -130,8 +130,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* How It Works - GRAY */}
-      <section id="how-it-works" className="py-20 px-8" style={{ background: '#161b22' }}>
+      {/* How It Works - BLACK */}
+      <section id="how-it-works" className="py-20 px-8" style={{ background: '#0d1117' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">How It Works</h2>
@@ -220,8 +220,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Why GitWork - BLACK */}
-      <section id="features" className="py-20 px-8" style={{ background: '#0d1117' }}>
+      {/* Why GitWork - GRAY */}
+      <section id="features" className="py-20 px-8" style={{ background: '#161b22' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">Why GitWork?</h2>
@@ -262,8 +262,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Supported Currencies - GRAY */}
-      <section className="py-20 px-8" style={{ background: '#161b22' }}>
+      {/* Supported Currencies - BLACK */}
+      <section className="py-20 px-8" style={{ background: '#0d1117' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">Supported Currencies</h2>
@@ -305,8 +305,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Join Our Community - BLACK */}
-      <section className="py-20 px-8" style={{ background: '#0d1117' }}>
+      {/* Join Our Community - GRAY */}
+      <section className="py-20 px-8" style={{ background: '#161b22' }}>
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-6">Join Our Community</h2>
           <p className="text-lg text-gray-400 mb-8">Follow us for updates and connect with other developers</p>
@@ -351,8 +351,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Ready to Make Open Source Rewarding - GRAY */}
-      <section className="py-20 px-8" style={{ background: '#161b22' }}>
+      {/* Ready to Make Open Source Rewarding - BLACK */}
+      <section className="py-20 px-8" style={{ background: '#0d1117' }}>
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-6">Ready to Make Open Source Rewarding?</h2>
           <p className="text-xl text-gray-400 mb-8">Join the future of open source development. Install GitWork in seconds.</p>
@@ -377,8 +377,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Footer - BLACK */}
-      <footer className="py-8 px-8 border-t" style={{ background: '#0d1117', borderColor: '#30363d' }}>
+      {/* Footer - GRAY */}
+      <footer className="py-8 px-8 border-t" style={{ background: '#161b22', borderColor: '#30363d' }}>
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-gray-400 text-sm">
             © 2025 GitWork • All rights reserved •{' '}
