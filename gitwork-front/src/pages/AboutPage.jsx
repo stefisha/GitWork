@@ -3,9 +3,9 @@ import USDC from '../assets/usd-coin-usdc-logo.svg';
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen" style={{ background: '#0d1117' }}>
-      {/* Hero Section */}
-      <section className="py-12 px-8">
+    <div className="min-h-screen">
+      {/* Hero Section - BLACK */}
+      <section className="py-12 px-8" style={{ background: '#0d1117' }}>
         <div className="max-w-6xl mx-auto text-center">
           <div className="inline-block px-4 py-2 rounded-full text-sm font-medium mb-6" style={{ background: '#161b22', border: '1px solid #30363d', color: '#8B5CF6' }}>
             🚀 Live on Solana Mainnet
@@ -54,18 +54,17 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Why Use Octavian Section */}
+      {/* Turn Issues Into Opportunities - GRAY */}
       <section className="py-20 px-8" style={{ background: '#161b22' }}>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-block px-4 py-2 rounded-full text-sm font-medium mb-6" style={{ background: '#161b22', border: '1px solid #30363d', color: '#8B5CF6' }}>
-                Meet Octavian
+                How It Works
               </div>
               <h2 className="text-4xl font-bold text-white mb-6">Turn Issues Into Opportunities</h2>
               <p className="text-lg text-gray-400 mb-8">
-                Octavian - GitWork's bot that turns issues into opportunities. Create bounties with a simple GitHub label, 
-                and pay contributors automatically when their work is merged.
+                Create bounties with a simple GitHub label and pay contributors automatically when their work is merged.
               </p>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
@@ -105,7 +104,7 @@ const AboutPage = () => {
                 <div className="p-6 font-mono text-sm">
                   <div className="mb-4">
                     <span className="text-gray-500">Label:</span>
-                    <span className="text-purple-400 ml-2">octavian:usdc:50</span>
+                    <span className="text-purple-400 ml-2">gitwork:usdc:50</span>
                   </div>
                   <div className="h-px bg-gray-700 my-4"></div>
                   <div className="text-gray-500 mb-2">// Automatic bounty created</div>
@@ -131,8 +130,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" className="py-20 px-8" style={{ background: '#161b22' }}>
+      {/* How It Works - BLACK */}
+      <section id="how-it-works" className="py-20 px-8" style={{ background: '#0d1117' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">How It Works</h2>
@@ -153,21 +152,21 @@ const AboutPage = () => {
                   1
                 </div>
                 <h4 className="text-lg font-bold text-white mb-2">Install GitWork</h4>
-                <p className="text-gray-400">Add the Octavian GitHub App to your repository in one click</p>
+                <p className="text-gray-400">Add the GitWork GitHub App to your repository in one click</p>
               </div>
               <div className="rounded-xl p-6" style={{ background: '#0d1117', border: '1px solid #30363d' }}>
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4 text-xl font-bold" style={{ background: '#8B5CF6', color: 'white' }}>
                   2
                 </div>
                 <h4 className="text-lg font-bold text-white mb-2">Label Your Issue</h4>
-                <p className="text-gray-400">Add a label like <code className="px-2 py-1 rounded text-sm" style={{ background: '#161b22', color: '#8B5CF6' }}>octavian:usdc:50</code> to any GitHub issue</p>
+                <p className="text-gray-400">Add a label like <code className="px-2 py-1 rounded text-sm" style={{ background: '#161b22', color: '#8B5CF6' }}>gitwork:usdc:50</code> to any GitHub issue</p>
               </div>
               <div className="rounded-xl p-6" style={{ background: '#0d1117', border: '1px solid #30363d' }}>
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4 text-xl font-bold" style={{ background: '#8B5CF6', color: 'white' }}>
                   3
                 </div>
                 <h4 className="text-lg font-bold text-white mb-2">Fund the Escrow</h4>
-                <p className="text-gray-400">Octavian creates a secure wallet and requests the bounty amount</p>
+                <p className="text-gray-400">GitWork creates a secure wallet and requests the bounty amount</p>
               </div>
               <div className="rounded-xl p-6" style={{ background: '#0d1117', border: '1px solid #30363d' }}>
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4 text-xl font-bold" style={{ background: '#8B5CF6', color: 'white' }}>
@@ -193,7 +192,7 @@ const AboutPage = () => {
                   1
                 </div>
                 <h4 className="text-lg font-bold text-white mb-2">Find a Bounty</h4>
-                <p className="text-gray-400">Look for issues labeled with Octavian bounties on GitHub</p>
+                <p className="text-gray-400">Look for issues labeled with GitWork bounties on GitHub</p>
               </div>
               <div className="rounded-xl p-6" style={{ background: '#0d1117', border: '1px solid #30363d' }}>
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4 text-xl font-bold" style={{ background: '#8B5CF6', color: 'white' }}>
@@ -207,7 +206,7 @@ const AboutPage = () => {
                   3
                 </div>
                 <h4 className="text-lg font-bold text-white mb-2">Get Tagged</h4>
-                <p className="text-gray-400">When your PR is merged, Octavian tags you with a claim link</p>
+                <p className="text-gray-400">When your PR is merged, GitWork tags you with a claim link</p>
               </div>
               <div className="rounded-xl p-6" style={{ background: '#0d1117', border: '1px solid #30363d' }}>
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4 text-xl font-bold" style={{ background: '#8B5CF6', color: 'white' }}>
@@ -221,8 +220,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="py-20 px-8">
+      {/* Why GitWork - GRAY */}
+      <section id="features" className="py-20 px-8" style={{ background: '#161b22' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">Why GitWork?</h2>
@@ -263,8 +262,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Supported Currencies */}
-      <section className="py-20 px-8" style={{ background: '#161b22' }}>
+      {/* Supported Currencies - BLACK */}
+      <section className="py-20 px-8" style={{ background: '#0d1117' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">Supported Currencies</h2>
@@ -278,7 +277,7 @@ const AboutPage = () => {
               <h3 className="text-2xl font-bold text-white mb-2">USDC</h3>
               <p className="text-gray-400 mb-4">Stablecoin pegged to USD</p>
               <code className="px-4 py-2 rounded text-sm inline-block" style={{ background: '#161b22', color: '#8B5CF6' }}>
-                octavian:usdc:50
+                gitwork:usdc:50
               </code>
             </div>
             <div className="rounded-xl p-8 text-center" style={{ background: '#0d1117', border: '1px solid #30363d' }}>
@@ -299,15 +298,15 @@ const AboutPage = () => {
               <h3 className="text-2xl font-bold text-white mb-2">SOL</h3>
               <p className="text-gray-400 mb-4">Native Solana token</p>
               <code className="px-4 py-2 rounded text-sm inline-block" style={{ background: '#161b22', color: '#8B5CF6' }}>
-                octavian:sol:0.5
+                gitwork:sol:0.5
               </code>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Socials Section */}
-      <section className="py-20 px-8">
+      {/* Join Our Community - GRAY */}
+      <section className="py-20 px-8" style={{ background: '#161b22' }}>
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-6">Join Our Community</h2>
           <p className="text-lg text-gray-400 mb-8">Follow us for updates and connect with other developers</p>
@@ -352,8 +351,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-8" style={{ background: '#161b22' }}>
+      {/* Ready to Make Open Source Rewarding - BLACK */}
+      <section className="py-20 px-8" style={{ background: '#0d1117' }}>
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-6">Ready to Make Open Source Rewarding?</h2>
           <p className="text-xl text-gray-400 mb-8">Join the future of open source development. Install GitWork in seconds.</p>
@@ -378,8 +377,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Footer with Privacy Policy Link */}
-      <footer className="py-8 px-8 border-t" style={{ borderColor: '#30363d' }}>
+      {/* Footer - GRAY */}
+      <footer className="py-8 px-8 border-t" style={{ background: '#161b22', borderColor: '#30363d' }}>
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-gray-400 text-sm">
             © 2025 GitWork • All rights reserved •{' '}

@@ -10,27 +10,11 @@ import {
   TOKEN_PROGRAM_ID
 } from '@solana/spl-token';
 import bs58 from 'bs58';
-import { getSmartConnection, getSolanaConnection } from './magicblock.js';
 
 const SOLANA_RPC_URL = process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com';
 const USDC_MINT = new PublicKey(process.env.USDC_MINT_ADDRESS || '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU');
-const USE_MAGICBLOCK = process.env.USE_MAGICBLOCK === 'true' || false; // Disabled by default until SDK available
 
-// Initialize connection (will use MagicBlock if enabled)
-let connection = null;
-
-async function initConnection() {
-  if (!connection) {
-    if (USE_MAGICBLOCK) {
-      connection = await getSmartConnection(true);
-      console.log('✅ Using MagicBlock ephemeral rollup for Solana operations');
-    } else {
-      connection = new Connection(SOLANA_RPC_URL, 'confirmed');
-      console.log('✅ Using standard Solana connection');
-    }
-  }
-  return connection;
-}
+const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
 
 /**
  * Create a new Solana keypair for escrow
@@ -70,7 +54,6 @@ export async function getUSDCTokenAccount(walletAddress) {
  */
 export async function checkUSDCBalance(walletAddress) {
   try {
-    const conn = await initConnection();
     const walletPubkey = new PublicKey(walletAddress);
     const tokenAccount = await getAssociatedTokenAddress(
       USDC_MINT,
@@ -78,7 +61,7 @@ export async function checkUSDCBalance(walletAddress) {
     );
     
     const accountInfo = await getAccount(
-      conn,
+      connection,
       tokenAccount,
       'confirmed',
       TOKEN_PROGRAM_ID
@@ -102,9 +85,8 @@ export async function checkUSDCBalance(walletAddress) {
  * @returns {Promise<number>} - Balance in SOL
  */
 export async function checkSOLBalance(walletAddress) {
-  const conn = await initConnection();
   const walletPubkey = new PublicKey(walletAddress);
-  const balance = await conn.getBalance(walletPubkey);
+  const balance = await connection.getBalance(walletPubkey);
   return balance / LAMPORTS_PER_SOL;
 }
 
@@ -139,19 +121,10 @@ export async function waitForDeposit(walletAddress, expectedAmount, currency = '
 /**
  * Get connection instance
  * 
- * @returns {Promise<Connection>}
- */
-export async function getConnection() {
-  return await initConnection();
-}
-
-/**
- * Get base layer connection (always Solana mainnet/devnet, not ephemeral)
- * 
  * @returns {Connection}
  */
-export function getBaseConnection() {
-  return getSolanaConnection();
+export function getConnection() {
+  return connection;
 }
 
 export default {

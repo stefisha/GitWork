@@ -9,13 +9,6 @@ import {
 } from './github.js';
 import { refundEscrowedFunds } from './privy.js';
 import { parseBountyLabel, findBountyLabel } from '../utils/parser.js';
-import { 
-  createEphemeralSession, 
-  closeEphemeralSession 
-} from './magicblock.js';
-
-// Track ephemeral sessions for bounties
-const bountySessionMap = new Map();
 
 /**
  * Create a new bounty from a GitHub issue
@@ -158,21 +151,6 @@ export function updateBountyStatus(id, status, additionalData = {}) {
   
   stmt.run(...values);
   logActivity(id, 'status_changed', { status, ...additionalData });
-  
-  // Create ephemeral session when bounty becomes ready to claim
-  if (status === 'ready_to_claim') {
-    createBountyEphemeralSession(id).catch(error => {
-      console.warn(`⚠️  Failed to create ephemeral session for bounty ${id}:`, error.message);
-      // Don't fail the status update if session creation fails
-    });
-  }
-  
-  // Close ephemeral session when bounty is claimed or cancelled
-  if (status === 'claimed' || status === 'cancelled') {
-    closeBountyEphemeralSession(id).catch(error => {
-      console.warn(`⚠️  Failed to close ephemeral session for bounty ${id}:`, error.message);
-    });
-  }
 }
 
 /**
@@ -538,101 +516,6 @@ export function getBountyByStatus(status) {
   return stmt.all(status);
 }
 
-/**
- * Create an ephemeral session for a bounty
- * Enables fast, low-cost transactions on MagicBlock
- * 
- * @param {number} bountyId - Bounty ID
- * @returns {Promise<Object|null>} - Session info or null
- */
-export async function createBountyEphemeralSession(bountyId) {
-  try {
-    const bounty = getBountyById(bountyId);
-    
-    if (!bounty) {
-      console.log(`Bounty ${bountyId} not found`);
-      return null;
-    }
-
-    console.log(`🚀 Creating ephemeral session for bounty ${bountyId}`);
-    
-    // Delegate the escrow wallet to the ephemeral rollup
-    const accounts = [bounty.escrow_wallet_address];
-    
-    const session = await createEphemeralSession(
-      bountyId.toString(),
-      accounts,
-      {
-        validUntil: Math.floor(Date.now() / 1000) + 86400, // 24 hours
-        autoCommit: true,
-        commitFrequency: 5,
-      }
-    );
-
-    // Store session mapping
-    bountySessionMap.set(bountyId, session.sessionId);
-    
-    logActivity(bountyId, 'ephemeral_session_created', {
-      sessionId: session.sessionId,
-      validUntil: session.validUntil,
-    });
-
-    console.log(`✅ Ephemeral session created for bounty ${bountyId}: ${session.sessionId}`);
-    
-    return session;
-  } catch (error) {
-    console.error(`❌ Failed to create ephemeral session for bounty ${bountyId}:`, error.message);
-    return null;
-  }
-}
-
-/**
- * Close the ephemeral session for a bounty
- * 
- * @param {number} bountyId - Bounty ID
- * @returns {Promise<Object|null>} - Close result or null
- */
-export async function closeBountyEphemeralSession(bountyId) {
-  try {
-    const sessionId = bountySessionMap.get(bountyId);
-    
-    if (!sessionId) {
-      console.log(`No ephemeral session found for bounty ${bountyId}`);
-      return null;
-    }
-
-    console.log(`🔒 Closing ephemeral session for bounty ${bountyId}`);
-    
-    const result = await closeEphemeralSession(sessionId);
-    
-    // Remove session mapping
-    bountySessionMap.delete(bountyId);
-    
-    logActivity(bountyId, 'ephemeral_session_closed', {
-      sessionId,
-      transactionCount: result.transactionCount,
-      duration: result.duration,
-    });
-
-    console.log(`✅ Ephemeral session closed for bounty ${bountyId}`);
-    
-    return result;
-  } catch (error) {
-    console.error(`❌ Failed to close ephemeral session for bounty ${bountyId}:`, error.message);
-    return null;
-  }
-}
-
-/**
- * Get the ephemeral session ID for a bounty
- * 
- * @param {number} bountyId - Bounty ID
- * @returns {string|null} - Session ID or null
- */
-export function getBountySessionId(bountyId) {
-  return bountySessionMap.get(bountyId) || null;
-}
-
 export default {
   createBounty,
   getBountyByIssue,
@@ -641,9 +524,6 @@ export default {
   checkBountyDeposit,
   logActivity,
   processBountyLabel,
-  getBountyByStatus,
-  createBountyEphemeralSession,
-  closeBountyEphemeralSession,
-  getBountySessionId,
+  getBountyByStatus
 };
 

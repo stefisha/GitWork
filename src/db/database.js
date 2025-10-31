@@ -49,6 +49,23 @@ const db = new Database(dbPath);
 // Enable WAL mode for better concurrency
 db.pragma('journal_mode = WAL');
 
+// Add timestamp formatting helper
+const getTimestamp = () => {
+  const now = new Date();
+  return now.toISOString().replace('T', ' ').substring(0, 19);
+};
+
+// Override console.log to add timestamps
+const originalLog = console.log;
+console.log = (...args) => {
+  originalLog(`[${getTimestamp()}]`, ...args);
+};
+
+const originalError = console.error;
+console.error = (...args) => {
+  originalError(`[${getTimestamp()}]`, ...args);
+};
+
 console.log(`📊 Database connected: ${dbPath}`);
 
 export default db;
