@@ -6,7 +6,7 @@ GitWork is a platform that automates bounty payments for open-source contributio
 
 ---
 
-## Current Architecture (Day 1)
+## Current Architecture (Alpha/Beta)
 
 ### Escrow Wallet Management
 
@@ -93,20 +93,7 @@ GitWork currently operates as a **trusted intermediary**:
 
 ## Known Risks & Mitigations
 
-### 🚨 Risk 1: Compromised `PRIVY_APP_SECRET`
-
-**Threat:** If an attacker gains access to the `PRIVY_APP_SECRET` environment variable, they can sign transactions for all escrow wallets and drain funds.
-
-**Impact:** Critical - all escrowed funds at risk
-
-**Mitigations:**
-- ✅ Secret stored in secure environment variables (not in code)
-- ✅ Server access restricted (production server hardened)
-- ✅ Privy uses enterprise-grade key management (HSMs)
-- ✅ Transaction logging for audit trail
-- ⚠️ **Day 2**: Migrate to on-chain escrow (removes this risk entirely)
-
-### 🚨 Risk 2: Server Compromise
+### 🚨 Risk 1: Server Compromise
 
 **Threat:** If the GitWork server is hacked, attacker gains access to all credentials and can manipulate bounty logic.
 
@@ -116,9 +103,9 @@ GitWork currently operates as a **trusted intermediary**:
 - ✅ Standard server hardening practices
 - ✅ Regular security updates
 - ✅ Minimal attack surface (no SSH access, firewalled)
-- ⚠️ **Day 2**: On-chain escrow eliminates centralized control
+- ⚠️ **Post-Beta**: On-chain escrow eliminates centralized control
 
-### 🚨 Risk 3: Privy Service Outage/Failure
+### 🚨 Risk 2: Privy Service Outage/Failure
 
 **Threat:** If Privy's service goes down or the company fails, escrow wallets may become temporarily or permanently inaccessible.
 
@@ -127,9 +114,9 @@ GitWork currently operates as a **trusted intermediary**:
 **Mitigations:**
 - ✅ Privy is a well-funded, established provider
 - ✅ Used by major Web3 projects (proven track record)
-- ⚠️ **Day 2**: On-chain escrow removes dependency on third-party service
+- ⚠️ **Post-Beta**: On-chain escrow removes dependency on third-party service
 
-### 🚨 Risk 4: GitHub OAuth Compromise
+### 🚨 Risk 3: GitHub OAuth Compromise
 
 **Threat:** If a contributor's GitHub account is compromised, attacker could claim their bounty.
 
@@ -141,9 +128,9 @@ GitWork currently operates as a **trusted intermediary**:
 - ✅ Transaction logs for dispute resolution
 - ⚠️ **Future**: Add secondary verification (email, wallet signature)
 
-### 🚨 Risk 5: Insider Threat
+### 🚨 Risk 4: Insider Threat
 
-**Threat:** GitWork operators have full access to `PRIVY_APP_SECRET` and could maliciously drain escrow funds.
+**Threat:** GitWork operators could maliciously manipulate bounty payments.
 
 **Impact:** Critical - reputational and financial damage
 
@@ -151,7 +138,7 @@ GitWork currently operates as a **trusted intermediary**:
 - ✅ Transparent operations (open-source codebase)
 - ✅ On-chain transaction history (all transfers publicly visible on Solana)
 - ✅ Legal liability (company structure, ToS)
-- ⚠️ **Day 2**: On-chain escrow makes this impossible (trustless)
+- ⚠️ **Post-Beta**: On-chain escrow makes this impossible (trustless)
 
 ---
 
@@ -198,7 +185,7 @@ For instant bounty claims, we integrate **MagicBlock Ephemeral Rollups**:
 
 ---
 
-## Day 2: Decentralized Architecture
+## Post-Beta: Decentralized Architecture
 
 ### Why We Need to Decentralize
 
@@ -206,7 +193,7 @@ Our current architecture prioritizes **user experience** and **rapid development
 
 ### Planned Migration: On-Chain Escrow Program
 
-**Timeline:** 6-12 months post-launch
+**Timeline:** Post-beta (after alpha period ends)
 
 **Technology:** Solana Smart Contract (Anchor Framework)
 
@@ -242,6 +229,8 @@ Our current architecture prioritizes **user experience** and **rapid development
    - ✅ **Auditable**: Smart contract code is public
    - ✅ **Time-locked**: Cancellations have delay periods
    - ✅ **Decentralized**: Works even if GitWork goes offline
+
+**Note:** This migration will happen after the alpha/beta testing period, once we've validated the current architecture and gathered user feedback.
 
 ### Hybrid Approach (Transition Period)
 
@@ -291,7 +280,7 @@ If selected for the Adevar Labs security audit, we would prioritize:
    - PR merge verification logic
    - Bot comment security (prevent impersonation)
 
-#### **Phase 2: Day 2 Architecture (Future)**
+#### **Phase 2: Post-Beta Architecture (Future)**
 1. **Smart Contract Design**
    - Escrow PDA security model
    - Oracle authorization and trust assumptions
@@ -366,13 +355,12 @@ If selected for the Adevar Labs security audit, we would prioritize:
 
 | Attack Vector | Likelihood | Impact | Mitigation Status |
 |---------------|------------|--------|------------------|
-| Compromised `PRIVY_APP_SECRET` | Low | Critical | ✅ Env vars, Day 2 migration |
-| Server breach | Low | Critical | ✅ Hardening, Day 2 migration |
+| Server breach | Low | Critical | ✅ Hardening, Post-beta migration |
 | GitHub OAuth hijack | Medium | Medium | ✅ GitHub security, wallet verification |
 | Webhook forgery | Low | Medium | ✅ Signature verification |
 | SQL injection | Low | Medium | ✅ Parameterized queries |
-| Insider theft | Very Low | Critical | ✅ Transparency, Day 2 migration |
-| Privy service failure | Very Low | High | ⚠️ Day 2 migration |
+| Insider manipulation | Very Low | Critical | ✅ Transparency, Post-beta migration |
+| Privy service failure | Very Low | High | ⚠️ Post-beta migration |
 | Smart contract exploit | N/A (future) | Critical | ⚠️ Audit before deployment |
 
 ---
@@ -433,10 +421,10 @@ GitWork is:
 
 ## Conclusion
 
-GitWork's current architecture prioritizes **user experience** and **rapid iteration** while maintaining **acceptable security** for early-stage operations. We are transparent about the trade-offs:
+GitWork's current architecture prioritizes **user experience** and **rapid iteration** while maintaining **acceptable security** for alpha/beta operations. We are transparent about the trade-offs:
 
-- ✅ **Current**: Centralized escrow (Privy) for UX and speed
-- 🎯 **Day 2**: Decentralized escrow (Solana smart contract) for trustlessness
+- ✅ **Alpha/Beta**: Centralized escrow (Privy) for UX and speed
+- 🎯 **Post-Beta**: Decentralized escrow (Solana smart contract) for trustlessness
 
 **We view the Adevar Labs security audit as a critical milestone** in our journey toward full decentralization. The audit will:
 1. Validate our current security model
@@ -460,5 +448,5 @@ GitWork's current architecture prioritizes **user experience** and **rapid itera
 ---
 
 **Last Updated:** October 31, 2025  
-**Version:** 1.0.0 (Day 1 Architecture)
+**Version:** 1.0.0 (Alpha Architecture)
 
