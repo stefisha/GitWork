@@ -1,10 +1,5 @@
 import express from 'express';
-import { 
-  getBountyById, 
-  updateBountyStatus, 
-  logActivity,
-  getBountySessionId 
-} from '../services/bounty.js';
+import { getBountyById, updateBountyStatus, logActivity } from '../services/bounty.js';
 import { transferBountyFunds } from '../services/privy.js';
 import { postIssueComment } from '../services/github.js';
 
@@ -63,23 +58,14 @@ router.post('/:bountyId', express.json(), async (req, res) => {
     console.log(`💰 Processing claim for bounty ${bounty.id} by @${githubUser}`);
     console.log(`   Transferring ${bounty.bounty_amount} ${bounty.currency} to ${walletAddress}`);
     
-    // Get ephemeral session for fast transfer
-    const sessionId = getBountySessionId(bounty.id);
-    if (sessionId) {
-      console.log(`⚡ Using MagicBlock ephemeral session: ${sessionId}`);
-    } else {
-      console.log(`🌐 No ephemeral session, using base layer`);
-    }
-    
-    // Transfer funds using MagicBlock ephemeral rollup if session exists
+    // Transfer funds
     let transactionSignature;
     try {
       transactionSignature = await transferBountyFunds(
         bounty.escrow_wallet_address,
         walletAddress,
         bounty.bounty_amount,
-        bounty.currency,
-        sessionId // Pass session ID for ephemeral execution
+        bounty.currency
       );
       
       console.log(`✅ Transfer successful: ${transactionSignature}`);

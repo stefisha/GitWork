@@ -1,4 +1,4 @@
-# GitWork
+# GitWork 🐙
 
 [![Live](https://img.shields.io/badge/Live-gitwork.io-8B5CF6?style=for-the-badge)](https://gitwork.io)
 [![Solana](https://img.shields.io/badge/Solana-Mainnet-14F195?style=for-the-badge&logo=solana&logoColor=white)](https://solana.com)
@@ -22,14 +22,19 @@ GitWork makes open source rewarding by enabling anyone to create bounties on Git
    Visit [github.com/apps/gitwork-io](https://github.com/apps/gitwork-io) and install it on your repository
 
 2. **Add a bounty label to any issue**  
-   Format: `gitwork:CURRENCY:AMOUNT`
+   Format: `gitwork:CURRENCY:AMOUNT` or `gitwork:CURRENCY:encrypted:AMOUNT`
    
    Examples:
    ```
-   gitwork:usdc:50    → 50 USDC bounty
-   gitwork:sol:0.5    → 0.5 SOL bounty
-   gitwork:usdc:12.5  → 12.5 USDC bounty
+   gitwork:usdc:50              → 50 USDC bounty (public)
+   gitwork:sol:0.5              → 0.5 SOL bounty (public)
+   gitwork:usdc:encrypted:100   → 100 USDC encrypted bounty (private) 🔐
    ```
+   
+   **Encrypted bounties** hide the amount from public view using Arcium MPC. Great for:
+   - Preventing bounty gaming
+   - Enterprise/corporate bounties
+   - Competitive advantage (hide what you value)
 
 3. **Fund the escrow wallet**  
    GitWork bot will comment with a Solana wallet address. Send the exact amount in the specified currency.
@@ -78,13 +83,13 @@ Simply remove the bounty label from the issue. If funds were already deposited, 
 
 ## ✨ Features
 
-- ⚡ **Lightning Fast** - Powered by MagicBlock Ephemeral Rollups for instant claims
 - ✅ **Instant Payments** - Receive funds in seconds via Solana blockchain
 - ✅ **Automatic Escrow** - Funds held securely until work is completed
 - ✅ **Zero Fees** - No platform fees (we cover transaction costs)
 - ✅ **Multiple Currencies** - Support for USDC (stablecoin) and SOL
 - ✅ **GitHub Integration** - Works seamlessly with your workflow
 - ✅ **Global Access** - Anyone with a Solana wallet can participate
+- 🔐 **Encrypted Bounties** - Private bounty amounts using Arcium MPC (optional)
 
 ---
 
@@ -108,21 +113,11 @@ Simply remove the bounty label from the issue. If funds were already deposited, 
 1. Repo Owner adds label     → gitwork:usdc:50
 2. GitWork creates escrow     → Solana wallet generated
 3. Owner funds escrow         → Sends 50 USDC to wallet
-4. Bounty becomes active      → Listed on gitwork.io + Ephemeral session created ⚡
+4. Bounty becomes active      → Listed on gitwork.io
 5. Contributor submits PR     → References issue #123
 6. Owner merges PR            → Closes the issue
-7. Contributor claims         → Receives 50 USDC instantly via MagicBlock ⚡
+7. Contributor claims         → Receives 50 USDC instantly
 ```
-
-### 🚀 MagicBlock Ephemeral Rollups
-
-GitWork uses **MagicBlock Ephemeral Rollups** to provide:
-- **⚡ Sub-second finality**: Claims are instant
-- **💰 Lower costs**: Minimal transaction fees
-- **🔄 Automatic settlement**: Periodic commits to Solana base layer
-- **🛡️ Secure**: Same security as Solana, faster execution
-
-When a bounty becomes claimable, an ephemeral session is automatically created, enabling contributors to receive their payments almost instantly. See [MAGICBLOCK_INTEGRATION.md](MAGICBLOCK_INTEGRATION.md) for technical details.
 
 ---
 
