@@ -729,7 +729,7 @@ And certainty is what enterprises demand.
 
 **Submission Author:**
 - GitHub: @stefisha
-- Email: support@gitwork.io
+- Email: stefan@gitwork.io
 
 ---
 
