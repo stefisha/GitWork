@@ -22,19 +22,13 @@ GitWork makes open source rewarding by enabling anyone to create bounties on Git
    Visit [github.com/apps/gitwork-io](https://github.com/apps/gitwork-io) and install it on your repository
 
 2. **Add a bounty label to any issue**  
-   Format: `gitwork:CURRENCY:AMOUNT` or `gitwork:CURRENCY:encrypted:AMOUNT`
+   Format: `gitwork:CURRENCY:AMOUNT`
    
    Examples:
    ```
    gitwork:usdc:50              → 50 USDC bounty (public)
    gitwork:sol:0.5              → 0.5 SOL bounty (public)
-   gitwork:usdc:encrypted:100   → 100 USDC encrypted bounty (private) 🔐
    ```
-   
-   **Encrypted bounties** hide the amount from public view using Arcium MPC. Great for:
-   - Preventing bounty gaming
-   - Enterprise/corporate bounties
-   - Competitive advantage (hide what you value)
 
 3. **Fund the escrow wallet**  
    GitWork bot will comment with a Solana wallet address. Send the exact amount in the specified currency.
