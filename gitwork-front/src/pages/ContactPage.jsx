@@ -37,7 +37,7 @@ const ContactPage = () => {
           from_email: formData.email,
           subject: formData.subject,
           message: formData.message,
-          to_email: 'support@gitwork.io'
+          to_email: import.meta.env.VITE_CONTACT_EMAIL
         }
       );
 
@@ -88,7 +88,7 @@ const ContactPage = () => {
           {submitStatus === 'error' && (
             <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg" style={{ background: '#5d1a1a', border: '1px solid #da3633' }}>
               <p className="text-red-400 text-xs sm:text-sm md:text-base">
-                ❌ Sorry, there was an error sending your message. Please try again or email us directly at support@gitwork.io
+                ❌ Sorry, there was an error sending your message. The hosted contact service is retired. For self-hosted instances, contact the instance operator.
               </p>
             </div>
           )}
@@ -185,12 +185,12 @@ const ContactPage = () => {
           {/* Alternative Contact */}
           <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-700">
             <p className="text-gray-400 text-xs sm:text-sm text-center px-2">
-              Prefer email? You can also reach us directly at{' '}
+              The hosted service is retired. You can explore the project at{' '}
               <a 
-                href="mailto:support@gitwork.io" 
+                href="https://github.com/stefisha/GitWork" 
                 className="text-purple-400 hover:text-purple-300 transition-colors duration-200 break-all"
               >
-                support@gitwork.io
+                GitWork source on GitHub
               </a>
             </p>
           </div>

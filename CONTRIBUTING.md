@@ -1,3 +1,5 @@
+> Historical reference: the hosted service is retired. Hostnames ending in `.example` below are placeholders for a self-hosted installation, not live GitWork services.
+
 # Contributing to GitWork
 
 Thank you for your interest in GitWork! This document explains how to contribute to improving the GitWork platform.
@@ -141,7 +143,7 @@ Have design skills? Help us improve the user experience!
 
 Questions about contributing?
 
-- **Email:** support@gitwork.io
+- **Project source:** [GitWork repository](https://github.com/stefisha/GitWork)
 - **GitHub Issues:** Ask questions in issues
 - **GitHub Discussions:** Coming soon
 

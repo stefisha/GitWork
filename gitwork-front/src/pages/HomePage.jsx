@@ -132,15 +132,15 @@ const HomePage = () => {
         )}
       </section>
 
-      {/* Alpha Launch Footer */}
+      {/* Retired Project Footer */}
       <footer className="fixed bottom-4 sm:bottom-8 left-0 right-0 px-4 z-10">
         <p className="text-xs sm:text-sm md:text-base text-gray-400 text-center leading-relaxed">
-          🚀 This is alpha launch - we are onboarding projects. If you want your repo and issues listed, contact us at{' '}
+          This project is retired. Explore the preserved implementation at{' '}
           <a 
-            href="mailto:support@gitwork.io" 
+            href="https://github.com/stefisha/GitWork" 
             className="text-purple-400 hover:text-purple-300 transition-colors duration-200 break-all"
           >
-            support@gitwork.io
+            GitWork source on GitHub
           </a>
         </p>
       </footer>

@@ -24,13 +24,13 @@ const AboutPage = () => {
           </p>
           <div className="flex justify-center gap-4 mb-12">
             <a 
-              href="https://github.com/apps/gitwork-io" 
+              href="https://github.com/stefisha/GitWork" 
               target="_blank" 
               rel="noopener noreferrer"
               className="px-8 py-3 rounded-lg font-semibold text-white transition-colors duration-200"
               style={{ background: '#8B5CF6' }}
             >
-              Install GitHub App
+              View Source
             </a>
             <a 
               href="#how-it-works"
@@ -442,24 +442,24 @@ const AboutPage = () => {
       {/* Ready to Make Open Source Rewarding - GRAY */}
       <section className="py-20 px-8" style={{ background: '#161b22' }}>
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">Ready to Make Open Source Rewarding?</h2>
-          <p className="text-xl text-gray-400 mb-8">Join the future of open source development. Install GitWork in seconds.</p>
+          <h2 className="text-4xl font-bold text-white mb-6">Explore the GitWork Project</h2>
+          <p className="text-xl text-gray-400 mb-8">GitWork is retired. Its original implementation is preserved for reference.</p>
           <div className="flex justify-center gap-4">
             <a 
-              href="https://github.com/apps/gitwork-io" 
+              href="https://github.com/stefisha/GitWork" 
               target="_blank" 
               rel="noopener noreferrer"
               className="px-8 py-3 rounded-lg font-semibold text-white transition-colors duration-200"
               style={{ background: '#8B5CF6' }}
             >
-              Install GitHub App
+              View Source
             </a>
             <a 
-              href="mailto:support@gitwork.io" 
+              href="https://github.com/stefisha/GitWork" 
               className="px-8 py-3 rounded-lg font-semibold text-white transition-colors duration-200"
               style={{ background: '#0d1117', border: '1px solid #30363d' }}
             >
-              Wanna Collaborate?
+              Project Repository
             </a>
           </div>
         </div>

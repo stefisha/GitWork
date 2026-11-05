@@ -1,3 +1,5 @@
+> Historical reference: the hosted service is retired. Hostnames ending in `.example` below are placeholders for a self-hosted installation, not live GitWork services.
+
 # Contributor Flow - Complete Guide
 
 This document provides a detailed walkthrough of the contributor flow in GitWork.
@@ -117,7 +119,7 @@ Step 4: Claim Bounty
 ┌──────────────────────────────────┐
 │ Contributor sees comment:        │
 │ "🎉 Bounty Ready to Claim!"     │
-│ Link: gitwork.io/claim/42        │
+│ Link: gitwork.example/claim/42        │
 └────────┬─────────────────────────┘
          │
          ▼
@@ -302,7 +304,7 @@ Fixes #42
 
 **Click the Claim Link:**
 ```
-https://gitwork.io/claim/42
+https://gitwork.example/claim/42
 ```
 
 **Login with GitHub:**
@@ -504,12 +506,12 @@ claimed (final)
 ### URL Structure
 
 ```
-https://gitwork.io/claim/{bountyId}
+https://gitwork.example/claim/{bountyId}
 ```
 
 **Example:**
 ```
-https://gitwork.io/claim/42
+https://gitwork.example/claim/42
 ```
 
 ### Dashboard States

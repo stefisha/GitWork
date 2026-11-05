@@ -2,15 +2,18 @@
 name: gitwork
 version: 1.0.0
 description: Skill for the GitWork platform. Create bounties via GitHub, discover open bounties, and understand claim flows. Solana-based escrow and payouts.
-homepage: https://gitwork.io
-metadata: {"category":"payments","api_base":"https://gitwork.io/api","currencies":["USDC","SOL"]}
+homepage: http://localhost:3000
+metadata: {"category":"payments","api_base":"http://localhost:3000/api","currencies":["USDC","SOL"]}
 ---
+
+> Archived integration reference. The hosted service is retired. Local URLs below are examples; use your own configured instance and GitHub App.
+
 
 # GitWork
 
 GitWork turns GitHub issues into instant bounties with Solana escrow. Repo maintainers add a label; contributors open a PR and get paid when it’s merged.
 
-> **Prerequisite:** The **GitWork GitHub App** must be **installed on the repository** before bounties can be created. The repo owner installs it from [gitwork.io](https://gitwork.io). Without the app, adding a `gitwork:` label will not create a bounty.
+> **Prerequisite:** The **GitWork GitHub App** must be **installed on the repository** before bounties can be created. The repo owner installs it from [your configured GitWork instance](http://localhost:3000). Without the app, adding a `gitwork:` label will not create a bounty.
 
 > **⚠️ v1 limitation — no withdrawals**
 >
@@ -19,14 +22,14 @@ GitWork turns GitHub issues into instant bounties with Solana escrow. Repo maint
 ## Key concepts
 
 - **Bounty** = A GitHub issue that has a GitWork label (e.g. `gitwork:10 USDC`) and an escrow wallet. Funds are locked until the bounty is claimed or refunded.
-- **Create bounty** — You do **not** create bounties on gitwork.io. You create a GitHub issue, ensure the GitWork app is installed on the repo, then add the label on the issue.
+- **Create bounty** — You do **not** create bounties on your configured GitWork instance. You create a GitHub issue, ensure the GitWork app is installed on the repo, then add the label on the issue.
 - **Discover bounties** — Use the public API to search and list open bounties. Clicking a bounty opens the **GitHub issue page**; all issue interaction (comments, PRs) is on GitHub.
-- **Claim** — When the maintainer merges the contributor’s PR, the bounty becomes ready to claim. Only the contributor can claim; **claim requires a logged-in browser session** on gitwork.io (no API key in v1).
+- **Claim** — When the maintainer merges the contributor’s PR, the bounty becomes ready to claim. Only the contributor can claim; **claim requires a logged-in browser session** on your configured GitWork instance (no API key in v1).
 - **Withdrawals** — **Not supported in v1.** Do not document or attempt withdrawal flows.
 
 ## How to create a bounty (GitHub flow)
 
-1. **Install GitWork** on the repository (one-time; repo owner does this from [gitwork.io](https://gitwork.io)).
+1. **Install GitWork** on the repository (one-time; repo owner does this from [your configured GitWork instance](http://localhost:3000)).
 2. **Create or use an issue** on GitHub (via GitHub UI or [GitHub API](https://docs.github.com/en/rest/issues/issues)).
 3. **Add the GitWork label** to the issue. Format: `gitwork:<amount> <CURRENCY>`.  
    Examples: `gitwork:10 USDC`, `gitwork:0.5 SOL`.  
@@ -37,7 +40,7 @@ You cannot create a bounty through the GitWork website; creation is GitHub issue
 
 ## Public API (no auth)
 
-Base URL: **https://gitwork.io/api**
+Base URL: **http://localhost:3000/api**
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -50,15 +53,15 @@ Base URL: **https://gitwork.io/api**
 ### Example — search bounties
 
 ```bash
-curl "https://gitwork.io/api/bounties/search"
-curl "https://gitwork.io/api/bounties/search?query=react"
+curl "http://localhost:3000/api/bounties/search"
+curl "http://localhost:3000/api/bounties/search?query=react"
 ```
 
 ### Example — fee info
 
 ```bash
-curl "https://gitwork.io/api/fees/info"
-curl "https://gitwork.io/api/fees/calculate?amount=100&currency=USDC"
+curl "http://localhost:3000/api/fees/info"
+curl "http://localhost:3000/api/fees/calculate?amount=100&currency=USDC"
 ```
 
 ## What agents can and cannot do (v1)
@@ -81,14 +84,14 @@ curl "https://gitwork.io/api/fees/calculate?amount=100&currency=USDC"
 
 | Resource | URL | Purpose |
 |----------|-----|---------|
-| This skill | https://gitwork.io/skill.md | GitWork agent skill and API summary |
-| GitWork | https://gitwork.io | Web app (install app, browse bounties, claim in browser) |
+| This skill | http://localhost:3000/skill.md | GitWork agent skill and API summary |
+| GitWork | http://localhost:3000 | Web app (install app, browse bounties, claim in browser) |
 | GitHub REST API | https://docs.github.com/en/rest | Issues, labels, PRs — for creating and managing bountied issues |
 | Solana | https://solana.com/docs | Escrow and payouts use Solana (USDC, SOL) |
 
 ## Support
 
-- Website: https://gitwork.io  
-- Skill: https://gitwork.io/skill.md  
+- Website: http://localhost:3000  
+- Skill: http://localhost:3000/skill.md  
 
 Good luck building with GitWork.

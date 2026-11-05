@@ -137,7 +137,7 @@ ${claimMessage}
 **Transaction:** [View on Solana Explorer](https://explorer.solana.com/tx/${transactionSignature})
 
 ---
-*Powered by [GitWork](https://gitwork.io) 🚀*`;
+*Powered by [GitWork](https://github.com/stefisha/GitWork) 🚀*`;
 
       await postIssueComment(
         bounty.github_installation_id,

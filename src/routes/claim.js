@@ -139,7 +139,7 @@ router.get('/:bountyId', (req, res) => {
               View Issue on GitHub
             </a>
             <div style="margin-top: 20px;">
-              <a href="https://gitwork.io/profile" class="btn" style="background: #8B5CF6;">
+              <a href="/profile" class="btn" style="background: #8B5CF6;">
                 View Your Profile
               </a>
             </div>
@@ -645,7 +645,7 @@ router.get('/:bountyId/success', (req, res) => {
           ` : ''}
           
           <div>
-            <a href="https://gitwork.io/profile${isWalletClaim ? '?refresh=wallet' : ''}" class="btn" style="background: #8B5CF6;">
+            <a href="/profile${isWalletClaim ? '?refresh=wallet' : ''}" class="btn" style="background: #8B5CF6;">
               View Your Profile
             </a>
             

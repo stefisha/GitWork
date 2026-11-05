@@ -23,7 +23,6 @@ async function sendDiscordMessage(content, embeds = []) {
         content,
         embeds,
         username: 'GitWork Bot',
-        avatar_url: 'https://gitwork.io/favicon.png'
       })
     });
 
@@ -104,7 +103,7 @@ export async function notifyBountyFunded(bounty) {
       },
       {
         name: '🔗 Links',
-        value: `[View Issue](https://github.com/${bounty.github_repo_owner}/${bounty.github_repo_name}/issues/${bounty.github_issue_number}) • [Find on GitWork](https://gitwork.io)`,
+        value: `[View Issue](https://github.com/${bounty.github_repo_owner}/${bounty.github_repo_name}/issues/${bounty.github_issue_number}) • [Project source](https://github.com/stefisha/GitWork)`,
         inline: false
       }
     ],

@@ -1,3 +1,5 @@
+> Historical reference: the hosted service is retired. Hostnames ending in `.example` below are placeholders for a self-hosted installation, not live GitWork services.
+
 # GitWork Documentation
 
 Welcome to GitWork! This documentation will help you understand how to use GitWork to create and claim bounties.
@@ -35,7 +37,7 @@ Welcome to GitWork! This documentation will help you understand how to use GitWo
 
 **Want to earn money solving open source issues?**
 
-1. Visit [gitwork.io](https://gitwork.io) to find bounties
+1. Visit [gitwork.example](https://gitwork.example) to find bounties
 2. Pick an issue and solve it
 3. Submit a PR that references the issue number
 4. Get it merged
@@ -144,9 +146,9 @@ Instantly! Once you click claim and sign with your wallet, funds arrive in secon
 
 Need help?
 
-- **Email:** support@gitwork.io
-- **Website:** [gitwork.io](https://gitwork.io)
-- **Contact Form:** [gitwork.io/contact](https://gitwork.io/contact)
+- **Project source:** [GitWork repository](https://github.com/stefisha/GitWork)
+- **Website:** [gitwork.example](https://gitwork.example)
+- **Contact Form:** [gitwork.example/contact](https://gitwork.example/contact)
 
 ---
 
@@ -154,7 +156,7 @@ Need help?
 
 **Alpha Launch** - We're onboarding projects!
 
-Want your repository to support GitWork bounties? Email us at support@gitwork.io
+The hosted service is retired. Self-hosting requires your own GitHub App and configuration.
 
 ---
 

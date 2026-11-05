@@ -1,3 +1,5 @@
+> Historical reference: the hosted service is retired. Hostnames ending in `.example` below are placeholders for a self-hosted installation, not live GitWork services.
+
 # GitWork Wallet System
 
 ## Overview
@@ -395,11 +397,11 @@ pm2 restart gitwork
 3. **Test:**
 ```bash
 # Test wallet creation
-curl -X GET https://gitwork.io/api/wallet/me \
+curl -X GET https://gitwork.example/api/wallet/me \
   --cookie "session=..."
 
 # Test claim with wallet
-curl -X POST https://gitwork.io/api/claim/1 \
+curl -X POST https://gitwork.example/api/claim/1 \
   -H "Content-Type: application/json" \
   -d '{"claimType":"wallet"}' \
   --cookie "session=..."
@@ -463,7 +465,7 @@ curl -X POST https://gitwork.io/api/claim/1 \
 ## Support
 
 For issues or questions:
-- **Email:** support@gitwork.io
+- **Project source:** [GitWork repository](https://github.com/stefisha/GitWork)
 - **Discord:** https://discord.gg/VWkGRHj3Cj
 - **GitHub:** https://github.com/stefisha/Octavian
 

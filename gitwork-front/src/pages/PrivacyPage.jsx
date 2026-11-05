@@ -11,8 +11,8 @@ const PrivacyPage = () => {
           </h1>
           <div className="text-gray-400 text-xs sm:text-sm md:text-base space-y-1 px-2">
             <p>Last updated: October 23, 2025</p>
-            <p>Website: <a href="https://gitwork.io" className="text-purple-400 hover:text-purple-300 break-all">https://gitwork.io</a></p>
-            <p>Contact: <a href="mailto:support@gitwork.io" className="text-purple-400 hover:text-purple-300 break-all">support@gitwork.io</a></p>
+            <p>Project source: <a href="https://github.com/stefisha/GitWork" className="text-purple-400 hover:text-purple-300 break-all">https://github.com/stefisha/GitWork</a></p>
+            <p>Retired service reference: <a href="https://github.com/stefisha/GitWork" className="text-purple-400 hover:text-purple-300 break-all">GitWork source on GitHub</a></p>
           </div>
         </div>
 
@@ -149,7 +149,7 @@ const PrivacyPage = () => {
               <li>Receive equal service regardless of exercising privacy rights</li>
             </ul>
             <p className="text-gray-300 text-sm sm:text-base mt-2">
-              To make a request, email us at <a href="mailto:support@gitwork.io" className="text-purple-400 hover:text-purple-300">support@gitwork.io</a>.
+              The retired service no longer accepts privacy requests. Project reference: <a href="https://github.com/stefisha/GitWork" className="text-purple-400 hover:text-purple-300">GitWork source on GitHub</a>.
             </p>
           </section>
 
@@ -195,7 +195,7 @@ const PrivacyPage = () => {
               <li>Disable analytics or cookies</li>
             </ul>
             <p className="text-gray-300 text-sm sm:text-base mt-2">
-              To exercise your rights, contact us at <a href="mailto:support@gitwork.io" className="text-purple-400 hover:text-purple-300">support@gitwork.io</a>.
+              The retired service no longer accepts privacy requests. Project reference: <a href="https://github.com/stefisha/GitWork" className="text-purple-400 hover:text-purple-300">GitWork source on GitHub</a>.
             </p>
           </section>
 
@@ -203,7 +203,7 @@ const PrivacyPage = () => {
           <section>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3">14. Updates to This Policy</h2>
             <p className="text-gray-300 text-xs sm:text-sm md:text-base">
-              We may update this Privacy Policy periodically. The latest version will always be available at <a href="https://gitwork.io/privacy" className="text-purple-400 hover:text-purple-300">https://gitwork.io/privacy</a>.
+              This Privacy Policy describes the retired service. This historical policy is preserved at <a href="/privacy" className="text-purple-400 hover:text-purple-300">/privacy</a>.
             </p>
           </section>
 
@@ -212,8 +212,8 @@ const PrivacyPage = () => {
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3">15. Contact Us</h2>
             <div className="text-gray-300 text-sm sm:text-base space-y-2">
               <p className="font-semibold text-white">GitWork Team</p>
-              <p>📧 <a href="mailto:support@gitwork.io" className="text-purple-400 hover:text-purple-300">support@gitwork.io</a></p>
-              <p>🌐 <a href="https://gitwork.io" className="text-purple-400 hover:text-purple-300">https://gitwork.io</a></p>
+              <p>📧 <a href="https://github.com/stefisha/GitWork" className="text-purple-400 hover:text-purple-300">GitWork source on GitHub</a></p>
+              <p>🌐 <a href="https://github.com/stefisha/GitWork" className="text-purple-400 hover:text-purple-300">https://github.com/stefisha/GitWork</a></p>
             </div>
           </section>
         </div>

@@ -139,12 +139,12 @@ export default function TermsPage() {
                 Terms of Service violations.
               </p>
               <p>
-                For serious issues, contact us at{' '}
+                The service is retired. Project reference:{' '}
                 <a 
-                  href="mailto:support@gitwork.io" 
+                  href="https://github.com/stefisha/GitWork" 
                   className="text-purple-400 hover:text-purple-300 transition-colors"
                 >
-                  support@gitwork.io
+                  GitWork source on GitHub
                 </a>
               </p>
             </div>
@@ -188,21 +188,21 @@ export default function TermsPage() {
             <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">10. Alpha Release Notice</h2>
             <div className="text-sm sm:text-base text-gray-300 space-y-3 leading-relaxed">
               <p>
-                GitWork is currently in <strong>alpha release</strong>. This means:
+                GitWork was developed as an <strong>alpha release</strong> and is now retired. The original release had these limitations:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-4">
                 <li>Features may be incomplete or change without notice</li>
                 <li>Bugs and issues may occur</li>
-                <li>The platform is undergoing active development and testing</li>
+                <li>The platform was an experimental application</li>
                 <li>Use the platform at your own risk</li>
               </ul>
               <p>
-                We appreciate early users and welcome feedback at{' '}
+                The original implementation is preserved at{' '}
                 <a 
-                  href="mailto:support@gitwork.io" 
+                  href="https://github.com/stefisha/GitWork" 
                   className="text-purple-400 hover:text-purple-300 transition-colors"
                 >
-                  support@gitwork.io
+                  GitWork source on GitHub
                 </a>
               </p>
             </div>
@@ -252,15 +252,15 @@ export default function TermsPage() {
             <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Contact Us</h2>
             <div className="text-sm sm:text-base text-gray-300 space-y-2 leading-relaxed">
               <p>
-                If you have questions about these Terms of Service, please contact us:
+                This is a historical policy for the retired service. Project reference:
               </p>
               <p>
-                Email:{' '}
+                Source:{' '}
                 <a 
-                  href="mailto:support@gitwork.io" 
+                  href="https://github.com/stefisha/GitWork" 
                   className="text-purple-400 hover:text-purple-300 transition-colors"
                 >
-                  support@gitwork.io
+                  GitWork source on GitHub
                 </a>
               </p>
             </div>

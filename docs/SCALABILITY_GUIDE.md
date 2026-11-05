@@ -1,3 +1,5 @@
+> Historical reference: the hosted service is retired. Hostnames ending in `.example` below are placeholders for a self-hosted installation, not live GitWork services.
+
 # GitWork Scalability Guide
 
 **Last Updated**: November 5, 2025  
@@ -88,11 +90,11 @@ upstream gitwork_backend {
 server {
     listen 80;
     listen 443 ssl http2;
-    server_name gitwork.io www.gitwork.io;
+    server_name gitwork.example www.gitwork.example;
 
     # SSL certificates
-    ssl_certificate /etc/letsencrypt/live/gitwork.io/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/gitwork.io/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/gitwork.example/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/gitwork.example/privkey.pem;
 
     location / {
         proxy_pass http://gitwork_backend;
@@ -151,7 +153,7 @@ pm2 monit
 
 #### Step 6: Test User Sessions
 
-1. Open gitwork.io in browser
+1. Open gitwork.example in browser
 2. Log in with GitHub
 3. Refresh multiple times
 4. Should stay logged in ✅
@@ -477,10 +479,10 @@ export default router;
 pm2 restart gitwork
 
 # Test login flow
-curl -i https://gitwork.io/auth/github
+curl -i https://gitwork.example/auth/github
 
 # After login, check cookie
-curl -i https://gitwork.io/api/user/status \
+curl -i https://gitwork.example/api/user/status \
   -H "Cookie: auth_token=YOUR_TOKEN_HERE"
 ```
 

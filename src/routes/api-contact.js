@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
 
     // Create email content
     const emailContent = `
-New contact form submission from GitWork.io
+New contact form submission from GitWork
 
 Name: ${name}
 Email: ${email}
@@ -39,7 +39,7 @@ Message:
 ${message}
 
 ---
-Sent from GitWork.io contact form
+Sent from GitWork contact form
     `.trim();
 
     // Log the contact form data for manual follow-up

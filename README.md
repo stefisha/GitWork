@@ -10,7 +10,7 @@
 
 ## Project status
 
-GitWork is a retired project, preserved here as a portfolio and technical reference. This repository contains the latest application implementation, including its original interface and integration flows. The former hosted service is no longer presented as an active product.
+GitWork is a retired project, preserved here as a portfolio and technical reference. This repository contains the latest application implementation, including its original interface and integration flows. The hosted service is retired, and the former domain is no longer owned by this project. Links in this repository point to the source code or use explicit self-hosting examples.
 
 Running the full application requires your own GitHub, Privy, Solana, and optional browser integration configuration. No production credentials or user databases are included.
 
