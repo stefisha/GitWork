@@ -1,6 +1,9 @@
 import { getBountyByStatus, checkBountyDeposit, updateBountyStatus, getBountyById } from './bounty.js';
 import { postIssueComment, generateDepositConfirmedComment } from './github.js';
 import db from '../db/database.js';
+import { notifyBountyFunded } from './discord.js';
+import { findDepositorAddress } from './solana.js';
+import { getTokenBySymbol } from '../config/tokens.js';
 
 const CHECK_INTERVAL = 30000; // 30 seconds
 
@@ -80,8 +83,47 @@ class DepositMonitor {
     if (depositResult.valid) {
       console.log(`✅ Deposit confirmed for bounty ${bounty.id} (Issue #${bounty.github_issue_number})`);
 
-      // Update status
-      updateBountyStatus(bounty.id, 'deposit_confirmed');
+      // Try to find and store the depositor address
+      let depositorAddress = null;
+      try {
+        const token = getTokenBySymbol(bounty.currency);
+        const mintForDepositor = token && token.mint ? token.mint : null;
+        depositorAddress = await findDepositorAddress(
+          bounty.escrow_wallet_address,
+          bounty.bounty_amount,
+          bounty.currency,
+          mintForDepositor
+        );
+        
+        if (depositorAddress) {
+          // Validate the address is a valid Solana public key before storing
+          try {
+            const { PublicKey } = await import('@solana/web3.js');
+            new PublicKey(depositorAddress); // This will throw if invalid
+            console.log(`👤 Found depositor address: ${depositorAddress}`);
+            // Store depositor address in database
+            db.prepare(`UPDATE bounties SET depositor_address = ? WHERE id = ?`).run(
+              depositorAddress,
+              bounty.id
+            );
+          } catch (error) {
+            console.error(`❌ Invalid depositor address found: ${depositorAddress}. Error: ${error.message}`);
+            console.log(`⚠️  Skipping invalid depositor address for bounty ${bounty.id}`);
+          }
+        } else {
+          console.log(`⚠️  Could not determine depositor address for bounty ${bounty.id}`);
+        }
+      } catch (error) {
+        console.error(`❌ Error finding depositor address:`, error.message);
+        // Continue even if we can't find the depositor
+      }
+
+      // Update status (with depositor address if found)
+      const updateData = depositorAddress ? { depositor_address: depositorAddress } : {};
+      updateBountyStatus(bounty.id, 'deposit_confirmed', updateData);
+      
+      // Notify Discord - only notification we send!
+      await notifyBountyFunded(bounty);
 
       // Check if we have installation ID
       if (!bounty.github_installation_id) {
@@ -130,12 +172,18 @@ class DepositMonitor {
       return;
     }
 
-    // Get current balances for display
-    const { checkUSDCBalance, checkSOLBalance } = await import('./solana.js');
-    const [usdcBalance, solBalance] = await Promise.all([
-      checkUSDCBalance(bounty.escrow_wallet_address),
-      checkSOLBalance(bounty.escrow_wallet_address)
-    ]);
+    // Get current balance for the expected currency
+    const token = getTokenBySymbol(bounty.currency);
+    let currentBalance = 0;
+    if (token) {
+      if (token.symbol === 'SOL') {
+        const { checkSOLBalance } = await import('./solana.js');
+        currentBalance = await checkSOLBalance(bounty.escrow_wallet_address);
+      } else {
+        const { checkSPLBalance } = await import('./solana.js');
+        currentBalance = await checkSPLBalance(bounty.escrow_wallet_address, token.mint, token.decimals);
+      }
+    }
 
     const errorComment = `## ❌ Invalid Deposit Detected
 
@@ -145,9 +193,7 @@ I detected a deposit in the escrow wallet, but it doesn't match the bounty requi
 - **Currency:** ${bounty.currency}
 - **Amount:** ${bounty.bounty_amount} ${bounty.currency}
 
-**Current Wallet Balance:**
-- **USDC:** ${usdcBalance}
-- **SOL:** ${solBalance}
+**Current ${bounty.currency} Balance:** ${currentBalance}
 
 **Issue:** ${depositResult.reason}
 

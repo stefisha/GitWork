@@ -1,214 +1,110 @@
-# GitWork 🐙
+# GitWork
 
-[![Live](https://img.shields.io/badge/Live-gitwork.io-8B5CF6?style=for-the-badge)](https://gitwork.io)
-[![Solana](https://img.shields.io/badge/Solana-Mainnet-14F195?style=for-the-badge&logo=solana&logoColor=white)](https://solana.com)
-[![GitHub App](https://img.shields.io/badge/GitHub-App-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/apps/gitwork-io)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Alpha-orange?style=for-the-badge)](https://gitwork.io)
+**Turn GitHub issues into funded bounties.** Reward open source contributions through GitHub workflows and Solana payments.
 
-**Turn GitHub issues into instant bounties. Pay developers automatically when their contributions are merged.**
+[![Status](https://img.shields.io/badge/status-retired-64748b)](#project-status)
+[![React](https://img.shields.io/badge/React-18-61dafb)](https://react.dev/)
+[![Solana](https://img.shields.io/badge/Solana-14f195)](https://solana.com/)
 
-GitWork makes open source rewarding by enabling anyone to create bounties on GitHub issues and automatically paying contributors when their work is merged—all powered by Solana blockchain.
+## Project status
 
-🌐 **Live at:** [gitwork.io](https://gitwork.io)
+GitWork is a retired project, preserved here as a portfolio and technical reference. This repository contains the latest application implementation, including its original interface and integration flows. The former hosted service is no longer presented as an active product.
 
----
+Running the full application requires your own GitHub, Privy, Solana, and optional browser integration configuration. No production credentials or user databases are included.
 
-## 🎯 For Repo Owners
+## How it works
 
-### How to Create a Bounty
+1. A repository owner adds a label such as `gitwork:USDC:50` to a GitHub issue.
+2. The GitHub App processes the label and creates a bounty with a dedicated escrow wallet.
+3. A deposit monitor confirms funding and updates the bounty listing.
+4. A contributor submits a pull request referencing the issue.
+5. Once the pull request is merged, the contributor can claim the reward.
 
-1. **Install the GitWork GitHub App**  
-   Visit [github.com/apps/gitwork-io](https://github.com/apps/gitwork-io) and install it on your repository
+The implementation includes GitHub OAuth, contributor profiles, managed user wallets, earnings history, withdrawals, configurable fees, refunds, token price estimates, and optional Discord funding notifications. Bounty labels support SOL and allowlisted SPL tokens; internal wallet withdrawals support USDC and SOL. Legacy `octavian:` labels remain supported.
 
-2. **Add a bounty label to any issue**  
-   Format: `gitwork:CURRENCY:AMOUNT`
-   
-   Examples:
-   ```
-   gitwork:usdc:50              → 50 USDC bounty (public)
-   gitwork:sol:0.5              → 0.5 SOL bounty (public)
-   ```
+## Technology
 
-3. **Fund the escrow wallet**  
-   GitWork bot will comment with a Solana wallet address. Send the exact amount in the specified currency.
+| Layer | Stack |
+| --- | --- |
+| Frontend | React 18, Vite, React Router, Tailwind CSS |
+| API | Node.js, Express, Passport, Octokit |
+| Storage | SQLite with `better-sqlite3` |
+| Wallets and settlement | Privy, Solana web3.js, SPL Token |
+| Supporting integrations | CoinGecko pricing, Discord webhooks, EmailJS |
 
-4. **Wait for contributors**  
-   Once funded, the bounty becomes active and contributors can start working on it!
+## Local setup
 
-5. **Merge the PR**  
-   When a contributor submits a PR that fixes the issue and you merge it, they can claim the bounty automatically.
+Use Node.js 22 or newer and npm. The native SQLite dependency may require compiler tools if a prebuilt binary is unavailable for your environment.
 
-### Canceling a Bounty
+```sh
+# Install the backend and frontend dependencies
+npm ci
+npm --prefix gitwork-front ci
 
-Simply remove the bounty label from the issue. If funds were already deposited, they'll be automatically refunded.
-
-📖 **Full Guide:** See [docs/REPO_OWNER_FLOW.md](docs/REPO_OWNER_FLOW.md)
-
----
-
-## 💰 For Contributors
-
-### How to Claim a Bounty
-
-1. **Find a bounty**  
-   - Visit [gitwork.io](https://gitwork.io) to search for active bounties
-   - Or look for issues with `gitwork:` labels on GitHub
-
-2. **Work on the issue**  
-   - Comment on the issue to let others know you're working on it
-   - Create a fix in your fork
-
-3. **Submit a PR**  
-   - Reference the issue number in your PR description (e.g., "Fixes #123")
-   - Make sure your code is clean and tested
-
-4. **Get your PR merged**  
-   - Wait for repo owner review
-   - Address any feedback
-
-5. **Claim your payment**  
-   - Once merged, GitWork bot posts a claim link
-   - Click the link, connect your Solana wallet, claim instantly!
-
-📖 **Full Guide:** See [docs/CONTRIBUTOR_FLOW.md](docs/CONTRIBUTOR_FLOW.md)
-
----
-
-## ✨ Features
-
-- ✅ **Instant Payments** - Receive funds in seconds via Solana blockchain
-- ✅ **Automatic Escrow** - Funds held securely until work is completed
-- ✅ **Zero Fees** - No platform fees (we cover transaction costs)
-- ✅ **Multiple Currencies** - Support for USDC (stablecoin) and SOL
-- ✅ **GitHub Integration** - Works seamlessly with your workflow
-- ✅ **Global Access** - Anyone with a Solana wallet can participate
-- 🔐 **Encrypted Bounties** - Private bounty amounts using Arcium MPC (optional)
-
----
-
-## 💡 Supported Currencies
-
-### USDC (Recommended)
-- Stablecoin pegged to USD
-- No price volatility
-- Perfect for predictable payments
-
-### SOL
-- Solana's native token
-- Fast and low-cost
-- Price varies with market
-
----
-
-## 📋 How It Works
-
-```
-1. Repo Owner adds label     → gitwork:usdc:50
-2. GitWork creates escrow     → Solana wallet generated
-3. Owner funds escrow         → Sends 50 USDC to wallet
-4. Bounty becomes active      → Listed on gitwork.io
-5. Contributor submits PR     → References issue #123
-6. Owner merges PR            → Closes the issue
-7. Contributor claims         → Receives 50 USDC instantly
+# Copy the safe configuration templates
+cp .env.example .env
+cp gitwork-front/.env.example gitwork-front/.env.local
 ```
 
----
+Configure your own credentials in the local environment files. Generate independent session and webhook secrets, for example with `openssl rand -hex 32`. Set `GITHUB_PRIVATE_KEY_PATH` to a locally stored GitHub App private key, and configure OAuth callback and claim URLs for your environment.
 
-## 🔒 Security & Trust
+```sh
+# Initialize storage and start the backend
+npm run db:migrate
+npm run dev
+```
 
-- **Escrow Protection** - Funds held in secure Solana wallets until work is completed
-- **On-Chain Transparency** - All transactions visible on Solana blockchain
-- **Automatic Validation** - Deposits and payouts verified automatically
-- **Refund Guarantee** - Cancel anytime before PR is merged for full refund
+In another terminal, run the original frontend:
 
----
+```sh
+npm --prefix gitwork-front run dev
+```
 
-## 🌟 Why GitWork?
+The original Vite configuration and backend both default to port 3000. If running them separately, choose another frontend port, such as `npm --prefix gitwork-front run dev -- --port 5173`, and configure the API and OAuth URLs for the setup you are testing. For a same-origin deployment, build the frontend and serve it through the Express production configuration.
 
-### The Problem
-- Open source developers work for free
-- No easy way to compensate contributors
-- Maintainers burn out without funding
-- Great contributors don't get rewarded
+```sh
+npm --prefix gitwork-front run build
+NODE_ENV=production npm start
+```
 
-### The Solution
-GitWork makes it **trivial** to reward open source work:
-- Label an issue → Bounty created
-- Merge a PR → Contributor paid
-- Zero manual payment processing
-- Global, instant, on-chain
+The example RPC and USDC mint use **Solana devnet**. Other allowlisted token mint addresses are historical mainnet configuration: review mint addresses and cluster compatibility before enabling those currencies.
 
----
+Browser settings beginning with `VITE_` are public. Keep GitHub App private keys, OAuth secrets, Privy secrets, RPC credentials, and wallet private keys in server-only configuration. Set `PLATFORM_REVENUE_WALLET` to a public wallet address explicitly.
 
-## 📱 Getting Started
+## Source map
 
-### For Repo Owners
-1. [Install GitWork](https://github.com/apps/gitwork-io) on your repository
-2. Read the [Repo Owner Guide](docs/REPO_OWNER_FLOW.md)
-3. Create your first bounty!
+| Path | Purpose |
+| --- | --- |
+| `gitwork-front/` | Original application interface |
+| `src/routes/` | Webhook, authentication, bounty, claim, wallet, and fee endpoints |
+| `src/services/` | GitHub, Privy, Solana, deposit monitoring, pricing, and Discord |
+| `src/db/` | Database schema and migrations |
+| `src/config/tokens.js` | Supported token configuration |
+| `docs/` | Product flows and implementation references |
+| `archive-site/` | Existing retired-project landing page |
 
-### For Contributors
-1. Visit [gitwork.io](https://gitwork.io)
-2. Read the [Contributor Guide](docs/CONTRIBUTOR_FLOW.md)
-3. Start solving issues and earning!
+## Documentation
 
----
+- [Repository owner flow](docs/REPO_OWNER_FLOW.md)
+- [Contributor flow](docs/CONTRIBUTOR_FLOW.md)
+- [Wallet flow](docs/GITWORK_WALLET.md)
+- [Fee system](docs/FEE_SYSTEM.md)
+- [Quick reference](docs/QUICK_REFERENCE.md)
+- [Visual flow](docs/VISUAL_FLOW.md)
+- [Security notes](SECURITY.md)
 
-## 📚 Documentation
+Detailed flow documents describe the retired service and may refer to its former hosted endpoints.
 
-- **[Repo Owner Flow](docs/REPO_OWNER_FLOW.md)** - How to create and manage bounties
-- **[Contributor Flow](docs/CONTRIBUTOR_FLOW.md)** - How to claim bounties and get paid
-- **[Quick Reference](docs/QUICK_REFERENCE.md)** - Common commands and tips
-- **[Visual Flow](docs/VISUAL_FLOW.md)** - Diagrams showing how everything works
-- **[FAQ](docs/CONTRIBUTOR_FLOW.md#faq)** - Frequently asked questions
+## Validation and limitations
 
----
+```sh
+# Compile the frontend
+npm --prefix gitwork-front run build
 
-## 💬 Support
+# Scan the full Git history with Gitleaks installed
+gitleaks git . --log-opts="--all" --redact
+```
 
-- **Website:** [gitwork.io](https://gitwork.io)
-- **Email:** support@gitwork.io
-- **GitHub Issues:** Report bugs or request features
-- **Contact Form:** Available on [gitwork.io/contact](https://gitwork.io/contact)
+The original `npm test` command auto-discovers scripts that exercise wallet transfers and webhooks. These are integration scripts, not an offline test suite; inspect and configure them before running. A successful frontend build does not validate payment settlement.
 
----
-
-## 🚀 Status
-
-**🎉 Alpha Launch** - We are onboarding projects!
-
-Want your repository listed? Contact us at support@gitwork.io
-
----
-
-## 📊 Stats
-
-Building the future of open source compensation:
-- 💰 Total bounties created: Growing daily
-- 🌍 Global contributors: From anywhere, paid instantly
-- ⚡ Average claim time: < 1 minute
-
----
-
-## 🤝 Contributing to GitWork
-
-Want to help improve GitWork itself? We welcome contributions!
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
-- Reporting bugs
-- Suggesting features  
-- Submitting pull requests
-- Our code of conduct
-
----
-
-## 📄 License
-
-MIT License - Making open source rewarding for everyone.
-
----
-
-**Made with 💜 for the open source community**
-
-*GitWork - Making open source rewarding.*
+This is historical application code, not an audited payment product. It uses server-controlled wallets rather than a trustless escrow smart contract. Review authorization, session handling, payout idempotency, concurrent withdrawals, amount validation, token configuration, and refunds before considering any deployment with real funds.

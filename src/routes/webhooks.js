@@ -4,6 +4,7 @@ import { Webhooks } from '@octokit/webhooks';
 import db from '../db/database.js';
 import { processBountyLabel, getBountyByIssue, updateBountyStatus, logActivity, cancelBountyAndRefund } from '../services/bounty.js';
 import { postIssueComment, generateClaimNotificationComment } from '../services/github.js';
+// Discord notifications removed - only notify on bounty funded
 
 const router = express.Router();
 
@@ -61,7 +62,7 @@ webhooks.on('issues.labeled', async ({ payload }) => {
     console.log(`💰 Bounty label detected on issue #${issue.number}`);
     
     try {
-      await processBountyLabel(
+      const bounty = await processBountyLabel(
         {
           ...issue,
           repository: {
@@ -73,6 +74,8 @@ webhooks.on('issues.labeled', async ({ payload }) => {
       );
       
       console.log(`✅ Bounty created for issue #${issue.number}`);
+      
+      // Discord notification will be sent when bounty is funded (not here)
     } catch (error) {
       console.error(`❌ Error processing bounty label:`, error);
     }
@@ -283,6 +286,9 @@ webhooks.on('pull_request.closed', async ({ payload }) => {
       contributor_github_username: pull_request.user.login,
       pull_request_number: pull_request.number
     });
+    
+    // Notify Discord
+    // Discord notification removed - only notify when bounty is funded, not when claimed
     
     // Post claim notification comment on the issue
     const claimUrl = `${process.env.CLAIM_BASE_URL || 'http://localhost:3000'}/claim/${bounty.id}`;

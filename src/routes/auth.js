@@ -74,6 +74,7 @@ router.get('/github/callback',
     
     // Store user in session
     req.session.githubUser = {
+      id: req.user.id, // GitHub user ID (stable, never changes)
       login: req.user.username,
       name: req.user.displayName,
       avatar: req.user.photos?.[0]?.value

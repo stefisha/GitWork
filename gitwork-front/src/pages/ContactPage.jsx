@@ -26,12 +26,12 @@ const ContactPage = () => {
 
     try {
       // Initialize EmailJS
-      emailjs.init('f6bns0GdOjJmKdJje');
+      emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
       
       // Send email using EmailJS with correct service ID
       const result = await emailjs.send(
-        'REMOVED_SENSITIVE_VALUE', // Your correct service ID
-        'template_1',
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
         {
           from_name: formData.name,
           from_email: formData.email,

@@ -1,5 +1,7 @@
 import express from 'express';
 import db from '../db/database.js';
+import { getTokensForDisplay } from '../config/tokens.js';
+import { getPricesUsd } from '../services/prices.js';
 
 const router = express.Router();
 
@@ -8,11 +10,13 @@ const router = express.Router();
  * Search for bounties (all or filtered by query)
  * Query params:
  *   - query: search term (repo name, owner, language, etc.)
+ * Returns each bounty with valueUsd (approx USD value) when price is available.
+ * Also returns tokens (symbol, displayDecimals) for formatting amounts in the UI.
  */
-router.get('/search', (req, res) => {
+router.get('/search', async (req, res) => {
   try {
     const { query } = req.query;
-    
+
     let sql = `
       SELECT 
         b.id,
@@ -22,17 +26,19 @@ router.get('/search', (req, res) => {
         b.github_repo_owner as owner,
         b.github_repo_name as repo,
         b.github_issue_number as issue_number,
+        b.github_issue_title,
+        b.is_repo_private,
         b.created_at,
         b.contributor_github_username as claimed_by,
         b.claimed_at,
         (b.github_repo_owner || '/' || b.github_repo_name) as full_repo_name
       FROM bounties b
       WHERE status = 'deposit_confirmed'
+        AND COALESCE(b.is_repo_private, 0) = 0
     `;
-    
+
     const params = [];
-    
-    // If query provided, filter by repo name or owner
+
     if (query && query.trim() !== '') {
       sql += `
         AND (
@@ -43,33 +49,48 @@ router.get('/search', (req, res) => {
       const searchTerm = `%${query.trim()}%`;
       params.push(searchTerm, searchTerm);
     }
-    
+
     sql += ' ORDER BY b.created_at DESC LIMIT 100';
-    
+
     const bounties = db.prepare(sql).all(...params);
-    
-    // Transform to frontend-friendly format
-    const results = bounties.map(b => ({
-      id: b.id,
-      name: `${b.owner}/${b.repo} #${b.issue_number}`,
-      description: `Issue #${b.issue_number}`,
-      githubUrl: `https://github.com/${b.owner}/${b.repo}/issues/${b.issue_number}`,
-      amount: b.amount,
-      currency: b.currency.toUpperCase(),
-      status: b.status,
-      repo: b.full_repo_name,
-      owner: b.owner,
-      createdAt: b.created_at,
-      claimedBy: b.claimed_by,
-      claimedAt: b.claimed_at
-    }));
-    
+
+    let prices = {};
+    try {
+      prices = await getPricesUsd();
+    } catch (e) {
+      console.warn('⚠️ Prices not available for search:', e.message);
+    }
+
+    const results = bounties.map(b => {
+      const currency = (b.currency || '').toUpperCase();
+      const price = prices[currency];
+      const valueUsd = typeof price === 'number' ? Math.round(b.amount * price * 100) / 100 : null;
+      return {
+        id: b.id,
+        name: `${b.owner}/${b.repo} #${b.issue_number}`,
+        description: b.github_issue_title || `Issue #${b.issue_number}`,
+        issueTitle: b.github_issue_title || null,
+        issueNumber: b.issue_number,
+        githubUrl: `https://github.com/${b.owner}/${b.repo}/issues/${b.issue_number}`,
+        amount: b.amount,
+        currency,
+        valueUsd,
+        status: b.status,
+        repo: b.full_repo_name,
+        owner: b.owner,
+        createdAt: b.created_at,
+        claimedBy: b.claimed_by,
+        claimedAt: b.claimed_at
+      };
+    });
+
     res.json({
       success: true,
       count: results.length,
-      bounties: results
+      bounties: results,
+      tokens: getTokensForDisplay()
     });
-    
+
   } catch (error) {
     console.error('❌ Error searching bounties:', error);
     res.status(500).json({

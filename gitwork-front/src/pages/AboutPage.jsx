@@ -5,10 +5,15 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section - BLACK */}
-      <section className="py-12 px-8" style={{ background: '#0d1117' }}>
+      <section className="py-8 px-8" style={{ background: '#0d1117' }}>
         <div className="max-w-6xl mx-auto text-center">
-          <div className="inline-block px-4 py-2 rounded-full text-sm font-medium mb-6" style={{ background: '#161b22', border: '1px solid #30363d', color: '#8B5CF6' }}>
-            🚀 Live on Solana Mainnet
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
+            <span className="inline-block px-4 py-2 rounded-full text-sm font-medium" style={{ background: '#161b22', border: '1px solid #30363d', color: '#8B5CF6' }}>
+              🚀 Live on Solana Mainnet
+            </span>
+            <span className="inline-block px-4 py-2 rounded-full text-sm font-medium" style={{ background: '#161b22', border: '1px solid #30363d', color: '#8B5CF6' }}>
+              Agent ready
+            </span>
           </div>
           <h1 className="text-6xl font-bold text-white mb-6">
             Making Open Source <span style={{ color: '#8B5CF6' }}>Rewarding</span>
@@ -44,7 +49,7 @@ const AboutPage = () => {
             </div>
             <div>
               <div className="text-3xl font-bold text-white mb-1">No Fees</div>
-              <div className="text-sm text-gray-400">During Beta</div>
+              <div className="text-sm text-gray-400">During Alpha</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-white mb-1">USDC + SOL</div>
@@ -104,7 +109,7 @@ const AboutPage = () => {
                 <div className="p-6 font-mono text-sm">
                   <div className="mb-4">
                     <span className="text-gray-500">Label:</span>
-                    <span className="text-purple-400 ml-2">gitwork:usdc:50</span>
+                    <span className="ml-2" style={{ color: '#8B5CF6' }}>gitwork:usdc:50</span>
                   </div>
                   <div className="h-px bg-gray-700 my-4"></div>
                   <div className="text-gray-500 mb-2">// Automatic bounty created</div>
@@ -136,6 +141,45 @@ const AboutPage = () => {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">How It Works</h2>
             <p className="text-xl text-gray-400">Simple workflow, powerful results</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-20">
+            <div className="flex flex-col gap-4">
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-2">Want to create bounties?</h3>
+                <p className="text-gray-400">Learn how maintainers install GitWork, label issues, and automate escrow.</p>
+              </div>
+              <div className="relative w-full overflow-hidden rounded-xl" style={{ paddingTop: '56.25%', border: '1px solid #30363d', background: '#161b22' }}>
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src="https://www.youtube.com/embed/R4QOi73ljEc"
+                  title="GitWork for Repo Owners"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  loading="lazy"
+                ></iframe>
+              </div>
+              <p className="text-sm uppercase tracking-wide text-gray-500">Maintainer walkthrough</p>
+            </div>
+            <div className="flex flex-col gap-4">
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-2">Want to get paid for contributing?</h3>
+                <p className="text-gray-400">See how contributors find bounties, submit PRs, and claim rewards instantly.</p>
+              </div>
+              <div className="relative w-full overflow-hidden rounded-xl" style={{ paddingTop: '56.25%', border: '1px solid #30363d', background: '#161b22' }}>
+                <iframe
+                  className="absolute inset-0 w-full h-full"
+                  src="https://www.youtube.com/embed/Dh9-UHNOV4g"
+                  title="GitWork for Contributors"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  loading="lazy"
+                ></iframe>
+              </div>
+              <p className="text-sm uppercase tracking-wide text-gray-500">Contributor walkthrough</p>
+            </div>
           </div>
 
           {/* For Repo Owners */}
@@ -235,8 +279,8 @@ const AboutPage = () => {
             </div>
             <div className="rounded-xl p-8" style={{ background: '#161b22', border: '1px solid #30363d' }}>
               <div className="text-5xl mb-4">💰</div>
-              <h3 className="text-xl font-bold text-white mb-3">No Fees During Beta</h3>
-              <p className="text-gray-400">Zero transaction fees while in beta - keep 100% of your bounty</p>
+              <h3 className="text-xl font-bold text-white mb-3">No Fees During Alpha</h3>
+              <p className="text-gray-400">Zero transaction fees while in alpha - keep 100% of your bounty</p>
             </div>
             <div className="rounded-xl p-8" style={{ background: '#161b22', border: '1px solid #30363d' }}>
               <div className="text-5xl mb-4">🔒</div>
@@ -305,8 +349,52 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Join Our Community - GRAY */}
+      {/* Coming Soon - GRAY */}
       <section className="py-20 px-8" style={{ background: '#161b22' }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-4">🚀 Coming Soon</h2>
+            <p className="text-xl text-gray-400">We're building the future of developer payments</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="rounded-xl p-8 text-center" style={{ background: '#0d1117', border: '2px solid #8B5CF6' }}>
+              <div className="text-5xl mb-4">🪙</div>
+              <h3 className="text-xl font-bold text-white mb-3">Tokenize Your Repo</h3>
+              <p className="text-gray-400">Launch your own repository token and reward contributors with equity-like ownership</p>
+              <div className="mt-4 inline-block px-3 py-1 rounded-full text-xs font-semibold" style={{ background: '#8B5CF6', color: 'white' }}>
+                Q4 2026
+              </div>
+            </div>
+            <div className="rounded-xl p-8 text-center" style={{ background: '#0d1117', border: '2px solid #8B5CF6' }}>
+              <div className="text-5xl mb-4">🏆</div>
+              <h3 className="text-xl font-bold text-white mb-3">Reputation System</h3>
+              <p className="text-gray-400">Earn levels, badges, and achievements. Compete on leaderboards and build your developer reputation.</p>
+              <div className="mt-4 inline-block px-3 py-1 rounded-full text-xs font-semibold" style={{ background: '#8B5CF6', color: 'white' }}>
+                Q4 2026
+              </div>
+            </div>
+            <div className="rounded-xl p-8 text-center" style={{ background: '#0d1117', border: '1px solid #30363d' }}>
+              <div className="text-5xl mb-4">💵</div>
+              <h3 className="text-xl font-bold text-white mb-3">Fiat Withdrawals</h3>
+              <p className="text-gray-400">Withdraw your earnings directly to your bank account in USD, EUR, and more</p>
+              <div className="mt-4 inline-block px-3 py-1 rounded-full text-xs font-semibold text-gray-400" style={{ background: '#161b22' }}>
+                Future
+              </div>
+            </div>
+            <div className="rounded-xl p-8 text-center" style={{ background: '#0d1117', border: '1px solid #30363d' }}>
+              <div className="text-5xl mb-4">📱</div>
+              <h3 className="text-xl font-bold text-white mb-3">Mobile App</h3>
+              <p className="text-gray-400">Keep track of everything on the go. Available exclusively on Solana Seeker.</p>
+              <div className="mt-4 inline-block px-3 py-1 rounded-full text-xs font-semibold text-gray-400" style={{ background: '#161b22' }}>
+                Future
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Join Our Community - BLACK */}
+      <section className="py-20 px-8" style={{ background: '#0d1117' }}>
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-6">Join Our Community</h2>
           <p className="text-lg text-gray-400 mb-8">Follow us for updates and connect with other developers</p>
@@ -351,8 +439,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Ready to Make Open Source Rewarding - BLACK */}
-      <section className="py-20 px-8" style={{ background: '#0d1117' }}>
+      {/* Ready to Make Open Source Rewarding - GRAY */}
+      <section className="py-20 px-8" style={{ background: '#161b22' }}>
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-6">Ready to Make Open Source Rewarding?</h2>
           <p className="text-xl text-gray-400 mb-8">Join the future of open source development. Install GitWork in seconds.</p>
@@ -377,11 +465,18 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Footer - GRAY */}
-      <footer className="py-8 px-8 border-t" style={{ background: '#161b22', borderColor: '#30363d' }}>
+      {/* Footer - BLACK */}
+      <footer className="py-8 px-8 border-t" style={{ background: '#0d1117', borderColor: '#30363d' }}>
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-gray-400 text-sm">
-            © 2025 GitWork • All rights reserved •{' '}
+            © 2026 GitWork • All rights reserved •{' '}
+            <a 
+              href="/skill.md" 
+              className="text-purple-400 hover:text-purple-300 transition-colors duration-200"
+            >
+              Agent Skill File
+            </a>
+            {' '}•{' '}
             <a 
               href="/privacy" 
               className="text-purple-400 hover:text-purple-300 transition-colors duration-200"

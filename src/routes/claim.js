@@ -341,36 +341,124 @@ router.get('/:bountyId', (req, res) => {
               <a href="/auth/logout?returnTo=/claim/${bounty.id}" style="text-decoration: none;">
                 <button class="btn btn-github">Sign in as different user</button>
               </a>
-            ` : `
+            ` : (() => {
+              const currencyUpper = (bounty.currency || '').toUpperCase();
+              const canClaimToGitWorkWallet = ['USDC', 'SOL'].includes(currencyUpper);
+              return `
               <div class="alert alert-success">
                 ✅ Signed in as <strong>@${req.session.githubUser.login}</strong>
               </div>
               
-              <label for="wallet" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">
-                Your Solana Wallet Address
-              </label>
-              <input 
-                type="text" 
-                id="wallet" 
-                class="wallet-input" 
-                placeholder="Enter your Solana wallet address..."
-                required
-              />
+              <div id="choice-screen" style="${!canClaimToGitWorkWallet ? 'display: none;' : ''}">
+                <h2 style="text-align: center; color: #111827; margin-bottom: 20px; font-size: 24px;">
+                  Choose what to do with your reward
+                </h2>
+                
+                <div style="display: grid; grid-template-columns: ${canClaimToGitWorkWallet ? '1fr 1fr' : '1fr'}; gap: 16px; margin-bottom: 20px;">
+                  <button class="btn" onclick="showDirectClaim()" style="background: #10b981; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <span style="font-size: 32px;">💸</span>
+                    <span style="font-size: 18px; font-weight: 700;">Claim Now</span>
+                    <span style="font-size: 14px; opacity: 0.9;">To your wallet</span>
+                  </button>
+                  ${canClaimToGitWorkWallet ? `
+                  <button class="btn" onclick="claimToWallet()" style="background: #8B5CF6; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <span style="font-size: 32px;">🔒</span>
+                    <span style="font-size: 18px; font-weight: 700;">Keep in Wallet</span>
+                    <span style="font-size: 14px; opacity: 0.9;">GitWork balance</span>
+                  </button>
+                  ` : ''}
+                </div>
+                ${canClaimToGitWorkWallet ? `
+                <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; text-align: center;">
+                  <p style="color: #6b7280; font-size: 14px;">
+                    💡 <strong>Pro tip:</strong> Keep it in your GitWork Wallet to accumulate earnings and withdraw anytime!
+                  </p>
+                </div>
+                ` : `
+                <div style="background: #fef3c7; padding: 16px; border-radius: 8px; text-align: center; border: 1px solid #f59e0b;">
+                  <p style="color: #92400e; font-size: 14px;">
+                    This bounty is in <strong>${bounty.currency}</strong>. GitWork wallet only holds USDC and SOL, so you’ll claim directly to your own wallet below.
+                  </p>
+                </div>
+                `}
+              </div>
               
-              <button class="btn btn-primary" onclick="claimBounty()">
-                Claim ${bounty.bounty_amount} ${bounty.currency}
-              </button>
+              <div id="direct-claim-screen" style="display: ${canClaimToGitWorkWallet ? 'none' : 'block'};">
+                ${canClaimToGitWorkWallet ? `
+                <button onclick="showChoice()" style="background: none; border: none; color: #667eea; cursor: pointer; margin-bottom: 20px; font-size: 14px;">
+                  ← Back to options
+                </button>
+                ` : ''}
+                <h3 style="margin-bottom: 16px; color: #111827;">💸 Claim to Your Wallet</h3>
+                
+                <label for="wallet" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">
+                  Your Solana Wallet Address
+                </label>
+                <input 
+                  type="text" 
+                  id="wallet" 
+                  class="wallet-input" 
+                  placeholder="Enter your Solana wallet address..."
+                  required
+                />
+                
+                <button class="btn btn-primary" onclick="claimDirect()">
+                  Claim ${bounty.bounty_amount} ${bounty.currency}
+                </button>
+              </div>
               
               <div id="claiming-status">
                 <div class="spinner"></div>
                 <p>Processing your claim...</p>
               </div>
-            `}
+            `;
+            })()}
           </div>
         </div>
         
         <script>
-          async function claimBounty() {
+          function showChoice() {
+            document.getElementById('choice-screen').style.display = 'block';
+            document.getElementById('direct-claim-screen').style.display = 'none';
+          }
+          
+          function showDirectClaim() {
+            document.getElementById('choice-screen').style.display = 'none';
+            document.getElementById('direct-claim-screen').style.display = 'block';
+          }
+          
+          async function claimToWallet() {
+            document.getElementById('choice-screen').style.display = 'none';
+            document.getElementById('claiming-status').style.display = 'block';
+            
+            try {
+              const response = await fetch('/api/claim/${bounty.id}', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                  claimType: 'wallet'
+                })
+              });
+              
+              const result = await response.json();
+              
+              if (response.ok) {
+                window.location.href = '/claim/${bounty.id}/success?tx=' + result.transactionSignature + '&type=wallet';
+              } else {
+                alert('Error: ' + result.error);
+                document.getElementById('claiming-status').style.display = 'none';
+                document.getElementById('choice-screen').style.display = 'block';
+              }
+            } catch (error) {
+              alert('Error claiming bounty: ' + error.message);
+              document.getElementById('claiming-status').style.display = 'none';
+              document.getElementById('choice-screen').style.display = 'block';
+            }
+          }
+          
+          async function claimDirect() {
             const wallet = document.getElementById('wallet').value.trim();
             
             if (!wallet) {
@@ -393,13 +481,16 @@ router.get('/:bountyId', (req, res) => {
                 headers: {
                   'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ walletAddress: wallet })
+                body: JSON.stringify({ 
+                  claimType: 'direct',
+                  walletAddress: wallet 
+                })
               });
               
               const result = await response.json();
               
               if (response.ok) {
-                window.location.href = '/claim/${bounty.id}/success?tx=' + result.transactionSignature;
+                window.location.href = '/claim/${bounty.id}/success?tx=' + result.transactionSignature + '&type=direct';
               } else {
                 alert('Error: ' + result.error);
                 document.querySelector('.btn-primary').style.display = 'block';
@@ -422,13 +513,17 @@ router.get('/:bountyId', (req, res) => {
  */
 router.get('/:bountyId/success', (req, res) => {
   const { bountyId } = req.params;
-  const { tx } = req.query;
+  const { tx, type } = req.query;
   
   const bounty = getBountyById(parseInt(bountyId));
   
   if (!bounty) {
     return res.status(404).send('Bounty not found');
   }
+  
+  const isWalletClaim = type === 'wallet';
+  const gradient = isWalletClaim ? 'linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+  const color = isWalletClaim ? '#8B5CF6' : '#10b981';
   
   res.send(`
     <!DOCTYPE html>
@@ -440,7 +535,7 @@ router.get('/:bountyId/success', (req, res) => {
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: ${gradient};
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -461,7 +556,7 @@ router.get('/:bountyId/success', (req, res) => {
           }
           h1 {
             font-size: 32px;
-            color: #10b981;
+            color: ${color};
             margin-bottom: 16px;
           }
           p {
@@ -474,6 +569,17 @@ router.get('/:bountyId/success', (req, res) => {
             font-weight: 700;
             color: #111827;
             margin-bottom: 30px;
+          }
+          .info-box {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+          }
+          .info-box p {
+            margin: 0;
+            font-size: 16px;
+            color: #374151;
           }
           .tx-link {
             background: #f3f4f6;
@@ -497,6 +603,7 @@ router.get('/:bountyId/success', (req, res) => {
             border-radius: 8px;
             font-weight: 600;
             transition: transform 0.2s;
+            margin: 5px;
           }
           .btn:hover {
             transform: translateY(-2px);
@@ -505,11 +612,28 @@ router.get('/:bountyId/success', (req, res) => {
       </head>
       <body>
         <div class="container">
-          <div class="success-icon">🎉</div>
-          <h1>Bounty Claimed!</h1>
-          <p>Congratulations! Your reward has been sent to your wallet.</p>
+          <div class="success-icon">${isWalletClaim ? '🔒' : '🎉'}</div>
+          <h1>${isWalletClaim ? 'Added to GitWork Wallet!' : 'Bounty Claimed!'}</h1>
+          <p>${isWalletClaim ? 'Your reward has been added to your GitWork balance!' : 'Congratulations! Your reward has been sent to your wallet.'}</p>
           
           <div class="amount">${bounty.bounty_amount} ${bounty.currency}</div>
+          
+          ${isWalletClaim ? `
+            <div class="info-box">
+              <p style="margin-bottom: 12px;">
+                💰 <strong>Your funds are safe in your GitWork Wallet</strong>
+              </p>
+              <p style="font-size: 14px; color: #6b7280;">
+                It may take a few seconds for the blockchain to process the transaction. Please refresh the page to see your updated balance.
+              </p>
+            </div>
+          ` : `
+            <div class="info-box">
+              <p style="font-size: 14px; color: #6b7280;">
+                ⏳ It may take a few seconds for the blockchain to process the transaction. Please refresh the page to see the updated status.
+              </p>
+            </div>
+          `}
           
           ${tx ? `
             <div class="tx-link">
@@ -520,13 +644,15 @@ router.get('/:bountyId/success', (req, res) => {
             </div>
           ` : ''}
           
-          <a href="https://gitwork.io/profile" class="btn" style="background: #8B5CF6; margin-right: 10px;">
-            View Your Profile
-          </a>
-          
-          <a href="https://github.com/${bounty.github_repo_owner}/${bounty.github_repo_name}/issues/${bounty.github_issue_number}" class="btn">
-            View Issue on GitHub
-          </a>
+          <div>
+            <a href="https://gitwork.io/profile${isWalletClaim ? '?refresh=wallet' : ''}" class="btn" style="background: #8B5CF6;">
+              View Your Profile
+            </a>
+            
+            <a href="https://github.com/${bounty.github_repo_owner}/${bounty.github_repo_name}/issues/${bounty.github_issue_number}" class="btn">
+              View Issue on GitHub
+            </a>
+          </div>
         </div>
       </body>
     </html>

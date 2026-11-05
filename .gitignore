@@ -49,3 +49,17 @@ temp/
 deployment/
 INTERNAL_DOCS.md
 
+
+# Additional environment variants and credential/audit artifacts
+.env.*
+!.env.example
+!**/.env.example
+*.key
+*.p12
+*.pfx
+*.sqlite*
+.snv
+**/.snv
+*credentials*.json
+*service-account*.json
+secret-audit/

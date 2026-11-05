@@ -11,6 +11,8 @@ function runMigrations() {
       github_repo_owner TEXT NOT NULL,
       github_repo_name TEXT NOT NULL,
       github_issue_number INTEGER NOT NULL,
+      github_issue_title TEXT,
+      is_repo_private INTEGER NOT NULL DEFAULT 0,
       bounty_amount REAL NOT NULL,
       currency TEXT NOT NULL DEFAULT 'USDC',
       escrow_wallet_address TEXT,
@@ -53,7 +55,51 @@ function runMigrations() {
     );
 
     CREATE INDEX IF NOT EXISTS idx_activity_log_bounty ON activity_log(bounty_id);
+
+    CREATE TABLE IF NOT EXISTS user_wallets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      github_user_id INTEGER NOT NULL UNIQUE,
+      github_username TEXT NOT NULL,
+      privy_wallet_address TEXT NOT NULL UNIQUE,
+      privy_wallet_id TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_user_wallets_github_user_id 
+    ON user_wallets(github_user_id);
   `);
+
+  // Add new columns to bounties table if they don't exist
+  try {
+    db.exec(`ALTER TABLE bounties ADD COLUMN claim_type TEXT DEFAULT NULL`);
+  } catch (e) {
+    // Column already exists, ignore
+  }
+  
+  try {
+    db.exec(`ALTER TABLE bounties ADD COLUMN claimed_by_github_id INTEGER DEFAULT NULL`);
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
+  try {
+    db.exec(`ALTER TABLE bounties ADD COLUMN github_issue_title TEXT`);
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
+  try {
+    db.exec(`ALTER TABLE bounties ADD COLUMN is_repo_private INTEGER NOT NULL DEFAULT 0`);
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
+  try {
+    db.exec(`ALTER TABLE bounties ADD COLUMN depositor_address TEXT DEFAULT NULL`);
+  } catch (e) {
+    // Column already exists, ignore
+  }
   
   console.log('✅ Database schema ready!');
 }

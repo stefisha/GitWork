@@ -1,5 +1,6 @@
 import db from '../db/database.js';
-import { checkUSDCBalance, checkSOLBalance } from './solana.js';
+import { checkSOLBalance, checkSPLBalance } from './solana.js';
+import { getTokenBySymbol, getSupportedSymbols } from '../config/tokens.js';
 import { createBountyWallet } from './privy.js';
 import { 
   postIssueComment, 
@@ -23,14 +24,16 @@ export async function createBounty({
   githubIssueNumber, 
   bountyAmount, 
   currency,
-  installationId 
+  installationId,
+  githubIssueTitle = null,
+  isRepoPrivate = false
 }) {
   // Generate a unique bounty ID first
   const tempId = `${githubRepoOwner}-${githubRepoName}-${githubIssueNumber}-${Date.now()}`;
   
   // Create Privy Solana wallet for this bounty
-  const walletAddress = await createBountyWallet(tempId);
-  console.log(`📬 Escrow wallet created: ${walletAddress}`);
+  const wallet = await createBountyWallet(tempId);
+  console.log(`📬 Escrow wallet created: ${wallet.address}`);
   
   const stmt = db.prepare(`
     INSERT INTO bounties (
@@ -38,13 +41,15 @@ export async function createBounty({
       github_repo_owner,
       github_repo_name,
       github_issue_number,
+      github_issue_title,
+      is_repo_private,
       bounty_amount,
       currency,
       escrow_wallet_address,
       escrow_wallet_private_key,
       github_installation_id,
       status
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending_deposit')
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending_deposit')
   `);
   
   try {
@@ -53,9 +58,11 @@ export async function createBounty({
       githubRepoOwner,
       githubRepoName,
       githubIssueNumber,
+      githubIssueTitle,
+      isRepoPrivate ? 1 : 0,
       bountyAmount,
       currency,
-      walletAddress,
+      wallet.address,
       null, // Privy manages the private key, we don't store it
       installationId
     );
@@ -63,12 +70,12 @@ export async function createBounty({
     logActivity(result.lastInsertRowid, 'bounty_created', { 
       amount: bountyAmount, 
       currency,
-      walletAddress: walletAddress
+      walletAddress: wallet.address
     });
     
     return {
       id: result.lastInsertRowid,
-      escrowWallet: walletAddress,
+      escrowWallet: wallet.address,
       amount: bountyAmount,
       currency
     };
@@ -168,56 +175,40 @@ export async function checkBountyDeposit(bountyId) {
   }
   
   console.log(`🔍 Checking deposit for bounty ${bountyId}: ${bounty.bounty_amount} ${bounty.currency}`);
-  
-  // Check both USDC and SOL balances to detect wrong currency deposits
-  const [usdcBalance, solBalance] = await Promise.all([
-    checkUSDCBalance(bounty.escrow_wallet_address),
-    checkSOLBalance(bounty.escrow_wallet_address)
-  ]);
-  
-  console.log(`💰 Wallet balances: USDC=${usdcBalance}, SOL=${solBalance}`);
-  
-  // Validate correct currency
-  if (bounty.currency === 'USDC') {
-    if (usdcBalance < bounty.bounty_amount) {
-      return { 
-        valid: false, 
-        reason: `Insufficient USDC. Required: ${bounty.bounty_amount}, Found: ${usdcBalance}`,
-        actualBalance: usdcBalance
-      };
-    }
-    
-    // Check if wrong currency was deposited
-    if (solBalance > 0) {
-      console.log(`⚠️  Warning: SOL found in USDC bounty wallet: ${solBalance} SOL`);
-      // Don't fail the bounty, but log the warning
-    }
-    
-    return { valid: true, actualBalance: usdcBalance };
-    
-  } else if (bounty.currency === 'SOL') {
+
+  const token = getTokenBySymbol(bounty.currency);
+  if (!token) {
+    return { valid: false, reason: `Unsupported currency: ${bounty.currency}` };
+  }
+
+  if (token.symbol === 'SOL') {
+    const solBalance = await checkSOLBalance(bounty.escrow_wallet_address);
+    console.log(`💰 Wallet SOL balance: ${solBalance}`);
     if (solBalance < bounty.bounty_amount) {
-      return { 
-        valid: false, 
+      return {
+        valid: false,
         reason: `Insufficient SOL. Required: ${bounty.bounty_amount}, Found: ${solBalance}`,
         actualBalance: solBalance
       };
     }
-    
-    // Check if wrong currency was deposited
-    if (usdcBalance > 0) {
-      console.log(`⚠️  Warning: USDC found in SOL bounty wallet: ${usdcBalance} USDC`);
-      // Don't fail the bounty, but log the warning
-    }
-    
     return { valid: true, actualBalance: solBalance };
-    
-  } else {
-    return { 
-      valid: false, 
-      reason: `Unsupported currency: ${bounty.currency}` 
+  }
+
+  // SPL token (USDC or any whitelisted token)
+  const balance = await checkSPLBalance(
+    bounty.escrow_wallet_address,
+    token.mint,
+    token.decimals
+  );
+  console.log(`💰 Wallet ${token.symbol} balance: ${balance}`);
+  if (balance < bounty.bounty_amount) {
+    return {
+      valid: false,
+      reason: `Insufficient ${token.symbol}. Required: ${bounty.bounty_amount}, Found: ${balance}`,
+      actualBalance: balance
     };
   }
+  return { valid: true, actualBalance: balance };
 }
 
 /**
@@ -382,23 +373,23 @@ ${bountyInfo.labels.map(label => `- \`${label.labelName}\` (${label.amount} ${la
   // Handle unsupported currency error
   if (bountyInfo.error === 'UNSUPPORTED_CURRENCY') {
     console.log(`❌ ${bountyInfo.message}`);
-    
-    // Post error comment on the issue
+
+    const supportedList = getSupportedSymbols();
+    const examples = supportedList.slice(0, 3).map(s => `\`gitwork:${s}:<amount>\``).join(', ');
+
     const errorComment = `## ❌ Unsupported Currency Detected
 
 I found an unsupported currency in your bounty label: **${bountyInfo.currency}**
 
 **Label:** \`${bountyInfo.labelName}\`
 
-**Supported currencies:**
-- **USDC** - USD Coin on Solana
-- **SOL** - Solana native token
+**Supported currencies:** ${supportedList.join(', ')}
 
 **To fix this:**
 1. Remove the current label: \`${bountyInfo.labelName}\`
-2. Add a supported label: \`gitwork:USDC:${bountyInfo.amount}\` or \`gitwork:SOL:${bountyInfo.amount}\`
+2. Add a supported label, e.g. ${examples}
 
-**Example:**
+**Examples:**
 - \`gitwork:USDC:50\` - 50 USDC bounty
 - \`gitwork:SOL:0.1\` - 0.1 SOL bounty
 
@@ -437,14 +428,24 @@ I found an unsupported currency in your bounty label: **${bountyInfo.currency}**
     if (existing.currency !== bountyInfo.currency || existing.bounty_amount !== bountyInfo.amount) {
       console.log(`Updating existing bounty from ${existing.currency} ${existing.bounty_amount} to ${bountyInfo.currency} ${bountyInfo.amount}`);
       
-      // Update the existing bounty
+      // Update the existing bounty (including issue title and private status if changed)
       const updateStmt = db.prepare(`
         UPDATE bounties 
-        SET bounty_amount = ?, currency = ?, updated_at = CURRENT_TIMESTAMP
+        SET bounty_amount = ?, 
+            currency = ?, 
+            github_issue_title = ?,
+            is_repo_private = ?,
+            updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
       `);
       
-      updateStmt.run(bountyInfo.amount, bountyInfo.currency, existing.id);
+      updateStmt.run(
+        bountyInfo.amount, 
+        bountyInfo.currency, 
+        issue.title || existing.github_issue_title,
+        issue.repository.private ? 1 : 0,
+        existing.id
+      );
       
       // Log the update
       logActivity(existing.id, 'bounty_updated', {
@@ -470,7 +471,9 @@ I found an unsupported currency in your bounty label: **${bountyInfo.currency}**
       githubIssueNumber: issue.number,
       bountyAmount: bountyInfo.amount,
       currency: bountyInfo.currency,
-      installationId: installationId
+      installationId: installationId,
+      githubIssueTitle: issue.title,
+      isRepoPrivate: issue.repository.private || false
     });
   } catch (error) {
     if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {

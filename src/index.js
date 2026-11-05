@@ -9,7 +9,6 @@ import { dirname, join } from 'path';
 dotenv.config();
 
 console.log('🔑 Webhook Secret loaded:', process.env.GITHUB_WEBHOOK_SECRET ? 'YES ✅' : 'NO ❌');
-console.log('🔑 Secret value:', process.env.GITHUB_WEBHOOK_SECRET);
 
 // NOW import modules that depend on environment variables
 import webhookRoutes from './routes/webhooks.js';
@@ -19,7 +18,8 @@ import apiClaimRoutes from './routes/api-claim.js';
 import apiBountiesRoutes from './routes/api-bounties.js';
 import apiUserRoutes from './routes/api-user.js';
 import apiContactRoutes from './routes/api-contact.js';
-import apiArciumRoutes from './routes/api-arcium.js';
+import apiFeesRoutes from './routes/api-fees.js';
+import apiWalletRoutes from './routes/api-wallet.js';
 import { runMigrations } from './db/migrate.js';
 import depositMonitor from './services/deposit-monitor.js';
 
@@ -65,7 +65,8 @@ app.use('/api/claim', apiClaimRoutes);
 app.use('/api/bounties', apiBountiesRoutes);
 app.use('/api/user', apiUserRoutes);
 app.use('/api/contact', apiContactRoutes);
-app.use('/api/arcium', apiArciumRoutes);
+app.use('/api/fees', apiFeesRoutes);
+app.use('/api/wallet', apiWalletRoutes);
 
 // Serve frontend static files in production
 if (process.env.NODE_ENV === 'production') {

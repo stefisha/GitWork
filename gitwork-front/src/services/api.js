@@ -68,10 +68,13 @@ export const api = {
         throw new Error(data.error || 'Failed to search bounties');
       }
       
-      return data.bounties || [];
+      return {
+        bounties: data.bounties || [],
+        tokens: data.tokens || []
+      };
     } catch (error) {
       console.error('Search bounties error:', error);
-      return [];
+      return { bounties: [], tokens: [] };
     }
   },
 

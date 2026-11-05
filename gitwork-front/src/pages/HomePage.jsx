@@ -10,8 +10,8 @@ const HomePage = () => {
   const handleSearch = async (searchData) => {
     setIsSearching(true);
     try {
-      const results = await api.searchBounties(searchData.query || '');
-      setSearchResults(results);
+      const result = await api.searchBounties(searchData.query || '');
+      setSearchResults(result);
     } catch (error) {
       console.error('Search error:', error);
     } finally {
@@ -62,56 +62,70 @@ const HomePage = () => {
           </div>
         )}
 
-        {searchResults && searchResults.length > 0 && (
+        {searchResults && searchResults.bounties && searchResults.bounties.length > 0 && (
           <div className="mt-4 sm:mt-8 space-y-4 px-4">
             <h3 className="text-lg sm:text-2xl font-bold text-white">
-              Found {searchResults.length} {searchResults.length === 1 ? 'Bounty' : 'Bounties'}
+              Found {searchResults.bounties.length} {searchResults.bounties.length === 1 ? 'Bounty' : 'Bounties'}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-              {searchResults.map((bounty) => (
-                <div 
-                  key={bounty.id} 
-                  className="rounded-lg p-4 sm:p-6 shadow-lg"
-                  style={{ background: '#161b22', border: '1px solid #30363d' }}
-                >
-                  <h4 className="text-sm sm:text-xl font-bold text-white mb-2 truncate">
-                    {bounty.repo}
-                  </h4>
-                  <p className="text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4 line-clamp-2">
-                    #{bounty.name.split('#')[1]}: {bounty.description}
-                  </p>
-                  <div className="flex justify-between items-center mb-3 sm:mb-4">
-                    <span className="text-lg sm:text-2xl font-bold" style={{ color: '#8B5CF6' }}>
-                      {bounty.amount} {bounty.currency}
-                    </span>
-                    <span 
-                      className="text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1 rounded-full flex-shrink-0"
-                      style={{ 
-                        background: bounty.status === 'claimed' ? '#1a472a' : '#1f2937',
-                        color: bounty.status === 'claimed' ? '#4ade80' : '#9ca3af'
-                      }}
-                    >
-                      {bounty.status === 'claimed' ? '✓ Claimed' : '💰 Active'}
-                    </span>
+              {searchResults.bounties.map((bounty) => {
+                const displayDecimals = (searchResults.tokens || []).find(t => t.symbol === bounty.currency)?.displayDecimals ?? 2;
+                const amountStr = Number(bounty.amount) === Math.floor(bounty.amount) && displayDecimals === 0
+                  ? String(Math.floor(bounty.amount))
+                  : Number(bounty.amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: displayDecimals });
+                const valueUsdStr = bounty.valueUsd != null
+                  ? (bounty.valueUsd >= 1000 ? `≈ $${(bounty.valueUsd / 1000).toFixed(1)}K` : `≈ $${Number(bounty.valueUsd).toFixed(2)}`)
+                  : null;
+                return (
+                  <div 
+                    key={bounty.id} 
+                    className="rounded-lg p-4 sm:p-6 shadow-lg"
+                    style={{ background: '#161b22', border: '1px solid #30363d' }}
+                  >
+                    <h4 className="text-sm sm:text-xl font-bold text-white mb-2 truncate">
+                      {bounty.repo}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4 line-clamp-2">
+                      #{bounty.issueNumber} · {bounty.description}
+                    </p>
+                    <div className="flex justify-between items-center mb-3 sm:mb-4">
+                      <div>
+                        <span className="text-lg sm:text-2xl font-bold" style={{ color: '#8B5CF6' }}>
+                          {amountStr} {bounty.currency}
+                        </span>
+                        {valueUsdStr && (
+                          <p className="text-xs text-gray-500 mt-0.5">{valueUsdStr}</p>
+                        )}
+                      </div>
+                      <span 
+                        className="text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1 rounded-full flex-shrink-0"
+                        style={{ 
+                          background: bounty.status === 'claimed' ? '#1a472a' : '#1f2937',
+                          color: bounty.status === 'claimed' ? '#4ade80' : '#9ca3af'
+                        }}
+                      >
+                        {bounty.status === 'claimed' ? '✓ Claimed' : '💰 Active'}
+                      </span>
+                    </div>
+                    <div className="mt-3 sm:mt-4">
+                      <a 
+                        href={bounty.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs sm:text-sm font-medium transition-colors duration-200"
+                        style={{ color: '#8B5CF6' }}
+                      >
+                        View on GitHub →
+                      </a>
+                    </div>
                   </div>
-                  <div className="mt-3 sm:mt-4">
-                    <a 
-                      href={bounty.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs sm:text-sm font-medium transition-colors duration-200"
-                      style={{ color: '#8B5CF6' }}
-                    >
-                      View on GitHub →
-                    </a>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
 
-        {searchResults && searchResults.length === 0 && (
+        {searchResults && searchResults.bounties && searchResults.bounties.length === 0 && (
           <div className="text-white text-sm sm:text-lg px-4">
             <p>No projects found. Try a different search term.</p>
           </div>

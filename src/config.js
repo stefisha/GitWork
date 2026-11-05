@@ -14,6 +14,8 @@ export default {
   PRIVY_APP_SECRET: process.env.PRIVY_APP_SECRET,
   SOLANA_RPC_URL: process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com',
   USDC_MINT_ADDRESS: process.env.USDC_MINT_ADDRESS || '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU',
-  PORT: process.env.PORT || 3000
+  PORT: process.env.PORT || 3000,
+  PLATFORM_FEE_PERCENTAGE: parseFloat(process.env.PLATFORM_FEE_PERCENTAGE) || 0,
+  PLATFORM_REVENUE_WALLET: process.env.PLATFORM_REVENUE_WALLET || process.env.SOLANA_FEE_PAYER_PRIVATE_KEY
 };
 

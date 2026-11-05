@@ -1,15 +1,18 @@
+import { isSupportedCurrency as isSupportedInWhitelist } from '../config/tokens.js';
+
 /**
  * Parse a bounty label to extract currency and amount
  * Supported formats: 
  * - gitwork:USDC:50 (preferred)
  * - octavian:USDC:50 (legacy, still supported)
+ * - gitwork:BONK:1000 (any whitelisted token)
  * 
  * @param {string} label - The label to parse
  * @returns {Object|null} - { currency, amount } or null if invalid
  */
 export function parseBountyLabel(label) {
   // Support both "gitwork:" and "octavian:" (legacy)
-  const pattern = /^(gitwork|octavian):([A-Z]+):(\d+(?:\.\d+)?)$/i;
+  const pattern = /^(gitwork|octavian):([A-Za-z0-9]+):(\d+(?:\.\d+)?)$/i;
   const match = label.match(pattern);
   
   if (!match) {
@@ -23,13 +26,13 @@ export function parseBountyLabel(label) {
     return null;
   }
   
-  // Validate currency is supported
-  if (!isSupportedCurrency(currency)) {
+  // Validate currency is in the token whitelist
+  if (!isSupportedInWhitelist(currency)) {
     return {
       error: 'UNSUPPORTED_CURRENCY',
       currency,
       amount,
-      message: `Unsupported currency: ${currency}. Only USDC and SOL are supported.`
+      message: `Unsupported currency: ${currency}. Use a whitelisted token (e.g. USDC, SOL).`
     };
   }
   
@@ -92,13 +95,12 @@ export function findBountyLabel(labels) {
 }
 
 /**
- * Validate that the currency is supported
+ * Validate that the currency is supported (delegates to token whitelist)
  * 
  * @param {string} currency - Currency code
  * @returns {boolean}
  */
 export function isSupportedCurrency(currency) {
-  const supported = ['USDC', 'SOL'];
-  return supported.includes(currency.toUpperCase());
+  return isSupportedInWhitelist(currency);
 }
 

@@ -1,6 +1,7 @@
 import { PrivyClient } from '@privy-io/node';
 import { Keypair } from '@solana/web3.js';
 import bs58 from 'bs58';
+import { getTokenBySymbol } from '../config/tokens.js';
 
 const PRIVY_APP_ID = process.env.PRIVY_APP_ID || process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 const PRIVY_APP_SECRET = process.env.PRIVY_APP_SECRET;
@@ -49,12 +50,10 @@ function getFeePayerWallet() {
 
   // Generate new fee payer wallet
   feePayerWallet = new Keypair();
-  const privateKey = bs58.encode(feePayerWallet.secretKey);
   
   console.log('🔑 Generated new fee payer wallet:');
   console.log(`   Address: ${feePayerWallet.publicKey.toBase58()}`);
-  console.log(`   Private Key: ${privateKey}`);
-  console.log('⚠️  IMPORTANT: Add this to your .env file as SOLANA_FEE_PAYER_PRIVATE_KEY');
+  console.warn('Configure a persistent SOLANA_FEE_PAYER_PRIVATE_KEY in your environment before using this service.');
   
   return feePayerWallet;
 }
@@ -63,7 +62,7 @@ function getFeePayerWallet() {
  * Create an embedded Solana wallet for a bounty via Privy
  * 
  * @param {string} bountyId - Unique identifier for the bounty
- * @returns {Promise<string>} - Solana wallet address
+ * @returns {Promise<Object>} - { address: string, id: string }
  */
 export async function createBountyWallet(bountyId) {
   console.log(`📬 Creating Privy embedded wallet for bounty ${bountyId}...`);
@@ -76,7 +75,10 @@ export async function createBountyWallet(bountyId) {
     const keypair = Keypair.generate();
     const walletAddress = keypair.publicKey.toString();
     console.log(`✅ Local Solana wallet created: ${walletAddress}`);
-    return walletAddress;
+    return { 
+      address: walletAddress, 
+      id: `local-${bountyId}` // Fallback ID for local wallets
+    };
   }
 
   try {
@@ -88,13 +90,15 @@ export async function createBountyWallet(bountyId) {
       // No owner specified = this is a server-controlled wallet
     });
     
-    const walletAddress = wallet.address;
-    console.log(`✅ Privy Solana wallet created: ${walletAddress}`);
+    console.log(`✅ Privy Solana wallet created: ${wallet.address}`);
     console.log(`🔑 Wallet ID: ${wallet.id}`);
-    console.log(`📬 Escrow wallet created: ${walletAddress}`);
+    console.log(`📬 Escrow wallet created: ${wallet.address}`);
     console.log(`ℹ️  Note: Transaction fees will be paid by the fee payer wallet`);
     
-    return walletAddress;
+    return {
+      address: wallet.address,
+      id: wallet.id  // Return the actual Privy wallet ID (clmXXX format)
+    };
     
   } catch (error) {
     console.error('❌ Privy wallet creation failed:', error.message);
@@ -108,7 +112,10 @@ export async function createBountyWallet(bountyId) {
     const keypair = Keypair.generate();
     const walletAddress = keypair.publicKey.toString();
     console.log(`✅ Local Solana wallet created: ${walletAddress}`);
-    return walletAddress;
+    return { 
+      address: walletAddress, 
+      id: `local-${bountyId}` // Fallback ID for local wallets
+    };
   }
 }
 
@@ -118,10 +125,14 @@ export async function createBountyWallet(bountyId) {
  * @param {string} escrowWalletAddress - Escrow wallet address (Privy-managed)
  * @param {string} recipientAddress - Recipient's Solana wallet address
  * @param {number} amount - Amount to transfer
- * @param {string} currency - Currency type (USDC or SOL)
+ * @param {string} currency - Currency type (USDC, SOL, or any whitelisted SPL symbol)
  * @returns {Promise<string>} - Transaction signature
  */
 export async function transferBountyFunds(escrowWalletAddress, recipientAddress, amount, currency = 'USDC') {
+  const token = getTokenBySymbol(currency);
+  if (!token) {
+    throw new Error(`Unsupported currency: ${currency}. Use a whitelisted token.`);
+  }
   console.log(`💸 Transferring ${amount} ${currency} from ${escrowWalletAddress} to ${recipientAddress}`);
 
   const client = getPrivyClient();
@@ -180,66 +191,112 @@ export async function transferBountyFunds(escrowWalletAddress, recipientAddress,
     console.log(`📡 Got recent blockhash: ${recentBlockhash.blockhash}`);
 
     let transferInstruction;
+    let instructions = []; // Declare here at the top level
     let logDetails = '';
 
-    if (currency === 'SOL') {
+    if (token.symbol === 'SOL') {
       // Native SOL transfer
       transferInstruction = SystemProgram.transfer({
         fromPubkey: new PublicKey(escrowWalletAddress),
         toPubkey: new PublicKey(recipientAddress),
-        lamports: Math.floor(amount * 1_000_000_000), // SOL has 9 decimals
+        lamports: Math.floor(amount * Math.pow(10, token.decimals)),
       });
 
       console.log(`📝 Created sponsored SOL transfer transaction`);
       console.log(`   From: ${escrowWalletAddress}`);
       console.log(`   To: ${recipientAddress}`);
-      console.log(`   Amount: ${amount} SOL (${Math.floor(amount * 1_000_000_000)} lamports)`);
+      console.log(`   Amount: ${amount} SOL`);
       console.log(`   Fee payer: ${feePayer.publicKey.toBase58()}`);
-      
+
       logDetails = `SOL transfer: ${amount} SOL`;
     } else {
-      // USDC (SPL token) transfer
+      // SPL token transfer (USDC or any whitelisted token)
       const {
         getAssociatedTokenAddress,
         createTransferInstruction,
+        createAssociatedTokenAccountInstruction,
+        getAccount,
         TOKEN_PROGRAM_ID
       } = await import('@solana/spl-token');
 
-      const USDC_MINT = process.env.USDC_MINT_ADDRESS || '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU';
+      const mint = new PublicKey(token.mint);
+      const divisor = Math.pow(10, token.decimals);
+      const rawAmount = Math.floor(amount * divisor);
 
       const senderTokenAccount = await getAssociatedTokenAddress(
-        new PublicKey(USDC_MINT),
+        mint,
         new PublicKey(escrowWalletAddress)
       );
 
+      try {
+        const senderAccount = await getAccount(connection, senderTokenAccount);
+        const senderBalance = Number(senderAccount.amount) / divisor;
+        console.log(`💰 Escrow wallet ${token.symbol} balance: ${senderBalance}`);
+
+        if (senderBalance < amount) {
+          throw new Error(`Insufficient ${token.symbol} in escrow. Required: ${amount}, Available: ${senderBalance}`);
+        }
+      } catch (error) {
+        if (error.name === 'TokenAccountNotFoundError') {
+          throw new Error(`Escrow wallet has no ${token.symbol} token account. Balance is 0.`);
+        }
+        throw error;
+      }
+
+      let recipientPubkey;
+      try {
+        recipientPubkey = new PublicKey(recipientAddress);
+      } catch (error) {
+        throw new Error(`Invalid recipient address: ${recipientAddress}. Error: ${error.message}`);
+      }
+
       const recipientTokenAccount = await getAssociatedTokenAddress(
-        new PublicKey(USDC_MINT),
-        new PublicKey(recipientAddress)
+        mint,
+        recipientPubkey
       );
+
+      try {
+        await getAccount(connection, recipientTokenAccount);
+        console.log(`✅ Recipient token account exists: ${recipientTokenAccount.toString()}`);
+      } catch (error) {
+        console.log(`⚠️ Recipient token account doesn't exist, creating...`);
+        const createATAInstruction = createAssociatedTokenAccountInstruction(
+          feePayer.publicKey,
+          recipientTokenAccount,
+          recipientPubkey,
+          mint
+        );
+        instructions.push(createATAInstruction);
+      }
 
       transferInstruction = createTransferInstruction(
         senderTokenAccount,
         recipientTokenAccount,
         new PublicKey(escrowWalletAddress),
-        amount * 1_000_000, // USDC has 6 decimals
+        rawAmount,
         [],
         TOKEN_PROGRAM_ID
       );
+      instructions.push(transferInstruction);
 
-      console.log(`📝 Created sponsored USDC transfer transaction`);
-      console.log(`   From token account: ${senderTokenAccount.toString()}`);
-      console.log(`   To token account: ${recipientTokenAccount.toString()}`);
-      console.log(`   Amount: ${amount} USDC (${amount * 1_000_000} micro-USDC)`);
-      console.log(`   Fee payer: ${feePayer.publicKey.toBase58()}`);
-      
-      logDetails = `USDC transfer: ${amount} USDC`;
+      console.log(`📝 Created sponsored ${token.symbol} transfer transaction`);
+      console.log(`   From: ${senderTokenAccount.toString()}`);
+      console.log(`   To: ${recipientTokenAccount.toString()}`);
+      console.log(`   Amount: ${amount} ${token.symbol} (raw: ${rawAmount})`);
+
+      logDetails = `${token.symbol} transfer: ${amount} ${token.symbol}`;
     }
 
+    // For SOL transfers, instructions array doesn't exist, so create it
+    if (currency === 'SOL') {
+      instructions = [transferInstruction];
+    }
+    
     // Create transaction message with fee payer
     const message = new TransactionMessage({
       payerKey: feePayer.publicKey, // Fee payer pays for transaction
       recentBlockhash: recentBlockhash.blockhash,
-      instructions: [transferInstruction],
+      instructions: instructions, // Use the instructions array (may include ATA creation)
     });
 
     // Create versioned transaction
@@ -258,25 +315,62 @@ export async function transferBountyFunds(escrowWalletAddress, recipientAddress,
     // Add fee payer signature
     transaction.sign([feePayer]);
 
+    // Simulate transaction first to catch errors early
+    try {
+      const simulation = await connection.simulateTransaction(transaction, {
+        replaceRecentBlockhash: true,
+        sigVerify: false
+      });
+      
+      if (simulation.value.err) {
+        console.error('❌ Transaction simulation failed:', simulation.value.err);
+        console.error('Simulation logs:', simulation.value.logs);
+        throw new Error(`Transaction simulation failed: ${JSON.stringify(simulation.value.err)}`);
+      }
+      
+      console.log(`✅ Transaction simulation successful (compute units: ${simulation.value.unitsConsumed})`);
+    } catch (simError) {
+      console.error('❌ Transaction simulation error:', simError);
+      throw simError;
+    }
+
     // Send transaction
-    const signature = await connection.sendTransaction(transaction);
-    console.log(`✅ Sponsored ${currency} transfer successful: ${signature}`);
+    const signature = await connection.sendTransaction(transaction, {
+      skipPreflight: false,
+      maxRetries: 3
+    });
+    
+    console.log(`📡 Transaction sent: ${signature}`);
+    console.log(`🔗 View on Explorer: https://explorer.solana.com/tx/${signature}`);
+    
+    // Don't wait for confirmation - transaction is sent, it will process
+    // If simulation passed, the transaction will succeed
+    console.log(`✅ Transaction sent successfully: ${signature}`);
+    console.log(`   (Transaction will process on-chain - check Explorer to verify)`);
     
     return signature;
 
   } catch (error) {
-    console.error('❌ Transfer failed:', error.message);
+    console.error('❌ Transfer failed:');
+    console.error('Error message:', error.message || 'No error message');
+    console.error('Error type:', error.constructor?.name || typeof error);
+    console.error('Full error:', error);
     if (error.response) {
       console.error('Response:', error.response.data);
     }
-    throw new Error(`Failed to transfer funds: ${error.message}`);
+    if (error.logs) {
+      console.error('Transaction logs:', error.logs);
+    }
+    if (error.stack) {
+      console.error('Stack trace:', error.stack);
+    }
+    throw new Error(`Failed to transfer funds: ${error.message || error.toString() || 'Unknown error'}`);
   }
 }
 
 /**
- * Refund escrowed funds to the fee payer wallet
- * This is a reasonable default since the fee payer is the system wallet
- * In production, you might want to track the original depositor
+ * Refund escrowed funds to the original depositor
+ * Falls back to fee payer wallet if depositor address is not available
  * 
  * @param {Object} bounty - Bounty object
  * @returns {Promise<Object>} - Refund transaction details
@@ -284,14 +378,22 @@ export async function transferBountyFunds(escrowWalletAddress, recipientAddress,
 export async function refundEscrowedFunds(bounty) {
   console.log(`💸 Refunding ${bounty.bounty_amount} ${bounty.currency} from bounty ${bounty.id}`);
   
-  // Use the fee payer wallet as the refund address
-  const feePayer = getFeePayerWallet();
-  if (!feePayer) {
-    throw new Error('Fee payer wallet not available for refund');
-  }
+  // Use depositor address if available, otherwise fall back to fee payer
+  let refundAddress;
   
-  const refundAddress = feePayer.publicKey.toBase58();
-  console.log(`🔄 Refunding to fee payer wallet: ${refundAddress}`);
+  if (bounty.depositor_address) {
+    refundAddress = bounty.depositor_address;
+    console.log(`🔄 Refunding to original depositor: ${refundAddress}`);
+  } else {
+    // Fall back to fee payer wallet if depositor not tracked
+    const feePayer = getFeePayerWallet();
+    if (!feePayer) {
+      throw new Error('Fee payer wallet not available for refund');
+    }
+    
+    refundAddress = feePayer.publicKey.toBase58();
+    console.log(`⚠️  Depositor address not found, refunding to fee payer wallet: ${refundAddress}`);
+  }
   
   try {
     const transactionSignature = await transferBountyFunds(
@@ -310,8 +412,9 @@ export async function refundEscrowedFunds(bounty) {
       currency: bounty.currency
     };
   } catch (error) {
-    console.error('❌ Refund failed:', error.message);
-    throw new Error(`Failed to refund funds: ${error.message}`);
+    console.error('❌ Refund failed:', error.message || error.toString() || 'Unknown error');
+    console.error('Full error:', error);
+    throw new Error(`Failed to refund funds: ${error.message || error.toString() || 'Unknown error'}`);
   }
 }
 
