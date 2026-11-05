@@ -1,3 +1,5 @@
+![GitWork — Make money on GitHub. Turn issues into income.](docs/assets/gitwork-banner.jpeg)
+
 # GitWork
 
 **Turn GitHub issues into funded bounties.** Reward open source contributions through GitHub workflows and Solana payments.
