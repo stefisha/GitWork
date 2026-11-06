@@ -4,6 +4,8 @@
 
 **Turn GitHub issues into funded bounties.** Reward open source contributions through GitHub workflows and Solana payments.
 
+I co-founded GitWork and was responsible for its architecture, full-stack development, deployment and maintenance. The platform onboarded 5+ projects and paid out $1K+ in Solana bounties during its first three weeks.
+
 [![Status](https://img.shields.io/badge/status-retired-64748b)](#project-status)
 [![React](https://img.shields.io/badge/React-18-61dafb)](https://react.dev/)
 [![Solana](https://img.shields.io/badge/Solana-14f195)](https://solana.com/)
